@@ -4,36 +4,52 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestão de Clientes</title>
+  <!-- Corrigido (assumindo que style.css está na pasta css) -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
+    <!-- Cabeçalho -->
+    <header>
+      <h1>Gestão de Clientes</h1>
+      <button onclick="window.history.back()" class="btn-voltar">← Voltar</button>
+    </header>
+
     <!-- Botão para mostrar/ocultar cadastro -->
     <button id="toggle-cadastro" class="btn">+ Novo Cliente</button>
 
-    <!-- Formulário de Cadastro (inicialmente oculto) -->
+    <!-- Formulário de Cadastro (oculto inicialmente) -->
     <div id="form-cadastro" class="hidden">
       <h2>Cadastrar Novo Cliente</h2>
-      <form>
-        <input type="text" placeholder="Nome" required>
-        <input type="email" placeholder="E-mail" required>
-        <input type="tel" placeholder="Telefone">
-        <button type="submit" class="btn">Salvar</button>
+      <form id="cadastro-cliente">
+        <div class="form-row">
+          <input type="text" placeholder="Nome" required>
+          <input type="email" placeholder="E-mail" required>
+        </div>
+        <div class="form-row">
+          <input type="tel" placeholder="Telefone">
+          <select>
+            <option>Tipo de Interesse</option>
+            <option>Casa</option>
+            <option>Apartamento</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-salvar">Salvar</button>
       </form>
     </div>
 
-    <!-- Lista de Clientes (Leads) -->
+    <!-- Lista de Clientes -->
     <div id="lista-clientes">
       <h2>Clientes Cadastrados</h2>
-      <table>
-        <!-- Conteúdo dinâmico via JS -->
+      <table id="tabela-clientes">
+        <!-- Preenchido via JavaScript -->
       </table>
     </div>
 
-    <!-- Formulário de Edição Horizontal (oculto inicialmente) -->
+    <!-- Formulário de Edição (horizontal e oculto) -->
     <div id="form-edicao" class="hidden horizontal-form">
       <h2>Editar Cliente</h2>
-      <form>
+      <form id="edicao-cliente">
         <div class="form-row">
           <input type="text" placeholder="Nome" required>
           <input type="email" placeholder="E-mail" required>
@@ -47,14 +63,14 @@
           <input type="date" placeholder="Último contato">
         </div>
         <div class="form-buttons">
-          <button type="button" class="btn-atendimento">Registrar Atendimento</button>
-          <button type="submit" class="btn-salvar">Salvar Alterações</button>
+          <button type="button" class="btn-atendimento">📞 Registrar Atendimento</button>
+          <button type="submit" class="btn-salvar">💾 Salvar Alterações</button>
         </div>
       </form>
     </div>
   </div>
 
+  <!-- Scripts -->
   <script src="clientes.js"></script>
-  <button onclick="window.history.back()" class="btn-voltar">← Voltar</button>
 </body>
 </html>
