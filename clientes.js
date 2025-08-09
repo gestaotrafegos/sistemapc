@@ -46,3 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Exemplo de uso (integrar com sua lógica real)
   abrirEdicao(1);
 });
+// Lógica para mostrar/ocultar formulários
+document.getElementById('toggle-cadastro').addEventListener('click', () => {
+  document.getElementById('form-cadastro').classList.toggle('hidden');
+});
