@@ -135,4 +135,17 @@ input, select {
   max-width: 100%;
   box-sizing: border-box;
 }
+.btn-voltar {
+  background: #f0f0f0;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+.btn-voltar:hover {
+  background: #ddd;
+}
+.hidden {
+  display: none;
+}
 
