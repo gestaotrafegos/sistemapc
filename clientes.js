@@ -1,52 +1,172 @@
-{
-  "corretores": {
-    "corretor1_id": {
-      "nome": "João Silva",
-      "email": "joao@imobiliaria.com"
+// =============================================
+// ARMAZENAMENTO DE DADOS (JSON DIRETO NO JS)
+// =============================================
+let dados = {
+  corretores: {
+    corretor1: {
+      id: "corretor1",
+      nome: "João Silva",
+      email: "joao@imobiliaria.com",
+      telefone: "(11) 98765-4321"
     }
   },
-  "leads": {
-    "lead1_id": {
-      "nome": "Cliente A",
-      "cpf": "123.456.789-00",
-      "telefone": "(11) 99999-9999",
-      "email": "cliente@email.com",
-      "qualidade": "quente",
-      "corretor_id": "corretor1_id",
-      "ultimo_contato": "2023-11-20T10:00:00",
-      "observacoes": {
-        "atendimento1_id": {
-          "data": "2023-11-20T10:00:00",
-          "texto": "Cliente interessado no apartamento XYZ"
+  leads: {
+    lead1: {
+      id: "lead1",
+      nome: "Cliente A",
+      cpf: "123.456.789-00",
+      telefone: "(11) 99999-9999",
+      email: "cliente@email.com",
+      qualidade: "quente",
+      corretor_id: "corretor1",
+      interesse: "Apartamento",
+      ultimo_contato: "2023-11-20",
+      observacoes: [
+        {
+          data: "2023-11-20",
+          texto: "Cliente interessado no apartamento XYZ"
         }
-      }
+      ]
     }
   }
-}
+};
+
+// =============================================
+// FUNÇÕES PRINCIPAIS
+// =============================================
 document.addEventListener('DOMContentLoaded', () => {
-  // Mostrar/ocultar formulário de cadastro
+  // Elementos DOM
   const toggleBtn = document.getElementById('toggle-cadastro');
   const formCadastro = document.getElementById('form-cadastro');
-  
+  const formEdicao = document.getElementById('form-edicao');
+  const tabelaClientes = document.getElementById('tabela-clientes');
+  const formCadastroCliente = document.getElementById('cadastro-cliente');
+  const formEdicaoCliente = document.getElementById('edicao-cliente');
+
+  // 1. Controle do Formulário de Cadastro
   toggleBtn.addEventListener('click', () => {
     formCadastro.classList.toggle('hidden');
     toggleBtn.textContent = formCadastro.classList.contains('hidden') ? 
       '+ Novo Cliente' : 'Cancelar';
   });
 
-  // Simulação: Abrir edição de cliente (exemplo)
-  function abrirEdicao(clienteId) {
-    document.getElementById('form-edicao').classList.remove('hidden');
-    // Rolagem suave para o formulário
-    document.querySelector('.horizontal-form').scrollIntoView({
-      behavior: 'smooth'
+  // 2. Carregar Leads na Tabela
+  function carregarLeads() {
+    tabelaClientes.innerHTML = `
+      <tr>
+        <th>Nome</th>
+        <th>Telefone</th>
+        <th>Interesse</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    `;
+    
+    Object.values(dados.leads).forEach(lead => {
+      const row = tabelaClientes.insertRow();
+      row.innerHTML = `
+        <td>${lead.nome}</td>
+        <td>${lead.telefone}</td>
+        <td>${lead.interesse}</td>
+        <td>${lead.qualidade}</td>
+        <td>
+          <button onclick="editarLead('${lead.id}')" class="btn-editar">✏️ Editar</button>
+          <button onclick="registrarAtendimento('${lead.id}')" class="btn-atendimento">📞 Atendimento</button>
+        </td>
+      `;
     });
   }
 
-  // Exemplo de uso (integrar com sua lógica real)
-  abrirEdicao(1);
+  // 3. Cadastrar Novo Lead
+  formCadastroCliente.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const novoLeadId = 'lead' + (Object.keys(dados.leads).length + 1;
+    const form = e.target;
+    
+    dados.leads[novoLeadId] = {
+      id: novoLeadId,
+      nome: form.querySelector('input[type="text"]').value,
+      email: form.querySelector('input[type="email"]').value,
+      telefone: form.querySelector('input[type="tel"]').value,
+      interesse: form.querySelector('select').value,
+      qualidade: "quente",
+      corretor_id: "corretor1",
+      ultimo_contato: new Date().toISOString().split('T')[0],
+      observacoes: []
+    };
+    
+    form.reset();
+    formCadastro.classList.add('hidden');
+    toggleBtn.textContent = '+ Novo Cliente';
+    carregarLeads();
+    alert('Lead cadastrado com sucesso!');
+  });
+
+  // 4. Editar Lead
+  window.editarLead = function(id) {
+    const lead = dados.leads[id];
+    formEdicao.classList.remove('hidden');
+    
+    const form = formEdicaoCliente;
+    form.dataset.leadId = id;
+    form.querySelector('input[type="text"]').value = lead.nome;
+    form.querySelector('input[type="email"]').value = lead.email;
+    form.querySelector('input[type="tel"]').value = lead.telefone;
+    form.querySelector('select').value = lead.interesse;
+    form.querySelector('input[type="date"]').value = lead.ultimo_contato;
+    
+    formEdicao.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // 5. Salvar Edição
+  formEdicaoCliente.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const leadId = form.dataset.leadId;
+    
+    dados.leads[leadId] = {
+      ...dados.leads[leadId],
+      nome: form.querySelector('input[type="text"]').value,
+      email: form.querySelector('input[type="email"]').value,
+      telefone: form.querySelector('input[type="tel"]').value,
+      interesse: form.querySelector('select').value,
+      ultimo_contato: form.querySelector('input[type="date"]').value
+    };
+    
+    formEdicao.classList.add('hidden');
+    carregarLeads();
+    alert('Alterações salvas!');
+  });
+
+  // 6. Registrar Atendimento
+  window.registrarAtendimento = function(id) {
+    const texto = prompt("Registre o atendimento:");
+    if (texto) {
+      dados.leads[id].observacoes.push({
+        data: new Date().toISOString().split('T')[0],
+        texto: texto
+      });
+      alert('Atendimento registrado!');
+    }
+  };
+
+  // Inicialização
+  carregarLeads();
 });
-// Lógica para mostrar/ocultar formulários
-document.getElementById('toggle-cadastro').addEventListener('click', () => {
-  document.getElementById('form-cadastro').classList.toggle('hidden');
-});
+
+// =============================================
+// FUNCIONALIDADES EXTRAS
+// =============================================
+function exportarDados() {
+  const dataStr = JSON.stringify(dados, null, 2);
+  const blob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'dados_clientes.json';
+  a.click();
+}
+
+// (Adicione um botão no HTML para chamar: <button onclick="exportarDados()">Exportar Dados</button>)
