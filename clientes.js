@@ -23,3 +23,26 @@
     }
   }
 }
+document.addEventListener('DOMContentLoaded', () => {
+  // Mostrar/ocultar formulário de cadastro
+  const toggleBtn = document.getElementById('toggle-cadastro');
+  const formCadastro = document.getElementById('form-cadastro');
+  
+  toggleBtn.addEventListener('click', () => {
+    formCadastro.classList.toggle('hidden');
+    toggleBtn.textContent = formCadastro.classList.contains('hidden') ? 
+      '+ Novo Cliente' : 'Cancelar';
+  });
+
+  // Simulação: Abrir edição de cliente (exemplo)
+  function abrirEdicao(clienteId) {
+    document.getElementById('form-edicao').classList.remove('hidden');
+    // Rolagem suave para o formulário
+    document.querySelector('.horizontal-form').scrollIntoView({
+      behavior: 'smooth'
+    });
+  }
+
+  // Exemplo de uso (integrar com sua lógica real)
+  abrirEdicao(1);
+});
