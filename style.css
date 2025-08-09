@@ -148,4 +148,35 @@ input, select {
 .hidden {
   display: none;
 }
+/* Estilos mínimos necessários */
+.hidden { display: none; }
+
+.btn-editar {
+  background: #FFC107;
+  color: #000;
+  border: none;
+  padding: 5px 10px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.btn-atendimento {
+  background: #2196F3;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+#tabela-clientes {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+#tabela-clientes th, #tabela-clientes td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
 
