@@ -209,6 +209,44 @@ header h1 {
 .btn-timeline:hover {
   background-color: #8e44ad !important;
 }
+/* Estilos para o sistema de observações */
+#lista-observacoes {
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+.observacao-item {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 5px;
+}
+
+.observacao-item:last-child {
+  border-bottom: none;
+}
+
+.observacao-titulo {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.observacao-data {
+  font-size: 0.8em;
+  color: #7f8c8d;
+}
+
+.observacao-texto {
+  margin-top: 5px;
+}
+
+textarea {
+  font-family: 'Lato', sans-serif;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: vertical;
+}
+
 
 
 
