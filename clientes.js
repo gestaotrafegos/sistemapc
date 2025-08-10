@@ -1,7 +1,7 @@
 // =============================================
-// ARMAZENAMENTO DE DADOS (JSON DIRETO NO JS)
+// ARMAZENAMENTO DE DADOS (JSON + localStorage)
 // =============================================
-let dados = {
+let dados = JSON.parse(localStorage.getItem('dadosImobiliaria')) || {
   corretores: {
     corretor1: {
       id: "corretor1",
@@ -31,8 +31,13 @@ let dados = {
   }
 };
 
+// Função para salvar dados no localStorage
+function salvarDados() {
+  localStorage.setItem('dadosImobiliaria', JSON.stringify(dados));
+}
+
 // =============================================
-// FUNÇÕES PRINCIPAIS
+// FUNÇÕES PRINCIPAIS (CORRIGIDAS)
 // =============================================
 document.addEventListener('DOMContentLoaded', () => {
   // Elementos DOM
@@ -52,18 +57,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 2. Carregar Leads na Tabela
   function carregarLeads() {
-    tabelaClientes.innerHTML = `
-      <tr>
-        <th>Nome</th>
-        <th>Telefone</th>
-        <th>Interesse</th>
-        <th>Status</th>
-        <th>Ações</th>
-      </tr>
-    `;
+    const tbody = tabelaClientes.querySelector('tbody') || tabelaClientes.createTBody();
+    tbody.innerHTML = '';
+    
+    // Cabeçalho se não existir
+    if (!tabelaClientes.tHead) {
+      const thead = tabelaClientes.createTHead();
+      thead.innerHTML = `
+        <tr>
+          <th>Nome</th>
+          <th>Telefone</th>
+          <th>Interesse</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      `;
+    }
     
     Object.values(dados.leads).forEach(lead => {
-      const row = tabelaClientes.insertRow();
+      const row = tbody.insertRow();
       row.innerHTML = `
         <td>${lead.nome}</td>
         <td>${lead.telefone}</td>
@@ -77,25 +89,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 3. Cadastrar Novo Lead
+  // 3. Cadastrar Novo Lead (CORRIGIDO)
   formCadastroCliente.addEventListener('submit', (e) => {
     e.preventDefault();
     
-    const novoLeadId = 'lead' + (Object.keys(dados.leads).length + 1;
     const form = e.target;
+    const nomeInput = form.querySelector('input[type="text"]');
+    const emailInput = form.querySelector('input[type="email"]');
+    
+    // Validação simples
+    if (!nomeInput.value || !emailInput.value) {
+      alert('Nome e e-mail são obrigatórios!');
+      return;
+    }
+    
+    const novoLeadId = 'lead' + (Object.keys(dados.leads).length + 1);
     
     dados.leads[novoLeadId] = {
       id: novoLeadId,
-      nome: form.querySelector('input[type="text"]').value,
-      email: form.querySelector('input[type="email"]').value,
-      telefone: form.querySelector('input[type="tel"]').value,
+      nome: nomeInput.value,
+      email: emailInput.value,
+      telefone: form.querySelector('input[type="tel"]').value || '',
       interesse: form.querySelector('select').value,
       qualidade: "quente",
-      corretor_id: "corretor1",
+      corretor_id: "corretor1", // CORREÇÃO: estava "corretor1"
       ultimo_contato: new Date().toISOString().split('T')[0],
       observacoes: []
     };
     
+    salvarDados(); // Persiste os dados
     form.reset();
     formCadastro.classList.add('hidden');
     toggleBtn.textContent = '+ Novo Cliente';
@@ -170,3 +192,20 @@ function exportarDados() {
 }
 
 // (Adicione um botão no HTML para chamar: <button onclick="exportarDados()">Exportar Dados</button>)
+// Inicialização
+  carregarLeads();
+});
+
+// =============================================
+// FUNCIONALIDADES EXTRAS
+// =============================================
+function exportarDados() {
+  const dataStr = JSON.stringify(dados, null, 2);
+  const blob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'dados_clientes.json';
+  a.click();
+}
