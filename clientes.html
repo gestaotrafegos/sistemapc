@@ -19,7 +19,7 @@
       <input type="text" id="pesquisa-cliente" placeholder="Pesquisar clientes..." class="form-row input">
       <button id="btn-pesquisar" class="btn btn-primary">Buscar</button>
       <button id="btn-limpar" class="btn btn-voltar">Limpar</button>
-      <button id="btn-exportar" class="btn btn-export">↓ Exportar Dados</button>
+      <button id="btn-exportar" onclick="exportarDados()" class="btn btn-export">↓ Exportar Dados</button>
     </div>
 
     <!-- Botão para mostrar/ocultar cadastro -->
@@ -102,7 +102,11 @@
         </div>
         <div class="form-row">
           <input type="date" id="ultimo-contato-edicao" placeholder="Último contato">
-          <input type="text" id="status-edicao" placeholder="Status (quente/morno/frio)">
+          <select id="status-edicao">
+            <option value="quente">Quente</option>
+            <option value="morno">Morno</option>
+            <option value="frio">Frio</option>
+          </select>
         </div>
         <div class="form-row">
           <div style="width: 100%;">
@@ -127,74 +131,40 @@
 
   <!-- Modal de Criação de Timeline -->
   <div id="modal-timeline" class="modal hidden">
-  <div class="modal-content">
-    <span class="close-modal" onclick="fecharModalTimeline()">&times;</span>
-    <h2>Criar Timeline para <span id="modal-cliente-nome"></span></h2>
-    <form id="form-criar-timeline">
-      <!-- Seção de Dados do Cliente 1 -->
-      <div class="form-section">
-        <h3>Cliente 1</h3>
-        <div class="form-row">
-          <input type="text" id="cliente1-nome" placeholder="Nome completo" required>
-          <input type="tel" id="cliente1-telefone" placeholder="Telefone" required>
+    <div class="modal-content">
+      <span class="close-modal" onclick="fecharModalTimeline()">&times;</span>
+      <h2>Criar Timeline para <span id="modal-cliente-nome"></span></h2>
+      <form id="form-criar-timeline">
+        <!-- Seção de Dados do Cliente -->
+        <div class="form-section">
+          <h3>Dados do Cliente</h3>
+          <div class="form-row">
+            <input type="text" id="timeline-cpf" placeholder="CPF" required>
+            <input type="text" id="timeline-rg" placeholder="RG" required>
+          </div>
+          <div class="form-row">
+            <input type="date" id="timeline-nascimento" placeholder="Data de Nascimento" required>
+            <input type="text" id="timeline-cep" placeholder="CEP" required>
+          </div>
         </div>
-        <div class="form-row">
-          <input type="text" id="cliente1-cpf" placeholder="CPF" required>
-          <input type="text" id="cliente1-rg" placeholder="RG" required>
-        </div>
-        <div class="form-row">
-          <input type="date" id="cliente1-nascimento" placeholder="Data de Nascimento" required>
-          <input type="text" id="cliente1-cep" placeholder="CEP" required>
-        </div>
-        <div class="form-row">
-          <input type="text" id="cliente1-rua" placeholder="Rua" required>
-          <input type="text" id="cliente1-bairro" placeholder="Bairro" required>
-        </div>
-        <div class="form-row">
-          <input type="text" id="cliente1-complemento" placeholder="Complemento">
-        </div>
-      </div>
 
-      <!-- Seção de Dados do Cliente 2 (Opcional) -->
-      <div class="form-section">
-        <h3>Cliente 2 (Opcional)</h3>
-        <div class="form-row">
-          <input type="text" id="cliente2-nome" placeholder="Nome completo">
-          <input type="tel" id="cliente2-telefone" placeholder="Telefone">
+        <!-- Seção de Dados de Renda -->
+        <div class="form-section">
+          <h3>Dados de Renda</h3>
+          <div class="form-row">
+            <input type="number" id="timeline-renda" placeholder="Renda mensal" required>
+            <input type="number" id="timeline-fgts" placeholder="Saldo FGTS" required>
+          </div>
         </div>
-        <div class="form-row">
-          <input type="text" id="cliente2-cpf" placeholder="CPF">
-          <input type="text" id="cliente2-rg" placeholder="RG">
-        </div>
-        <div class="form-row">
-          <input type="date" id="cliente2-nascimento" placeholder="Data de Nascimento">
-        </div>
-      </div>
 
-      <!-- Seção de Dados de Renda -->
-      <div class="form-section">
-        <h3>Dados de Renda</h3>
-        <div class="form-row">
-          <input type="number" id="renda-bruta" placeholder="Renda bruta somada" required>
-          <select id="fgts-tempo" required>
-            <option value="">Tempo de contribuição FGTS</option>
-            <option value="sim">Superior a 3 anos</option>
-            <option value="nao">Inferior a 3 anos</option>
-          </select>
+        <!-- Botões de Ação -->
+        <div class="form-buttons">
+          <button type="submit" class="btn btn-primary">Criar Timeline</button>
+          <button type="button" class="btn btn-voltar" onclick="fecharModalTimeline()">Cancelar</button>
         </div>
-        <div class="form-row">
-          <input type="number" id="valor-avaliacao" placeholder="Valor para avaliação" required>
-        </div>
-      </div>
-
-      <!-- Botões de Ação -->
-      <div class="form-buttons">
-        <button type="submit" class="btn btn-primary">Criar Timeline</button>
-        <button type="button" class="btn btn-voltar" onclick="fecharModalTimeline()">Cancelar</button>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
-</div>
   <script src="clientes.js"></script>
 </body>
 </html>
