@@ -255,23 +255,53 @@ document.getElementById('btn-adicionar-observacao').addEventListener('click', ()
   });
 
   // 6. Registrar Atendimento
- window.registrarAtendimento = function(id) {
-  const lead = dados.leads[id];
-  formEdicao.classList.remove('hidden');
-  document.getElementById('id-edicao').value = id;
-  
-  // Preenche os campos existentes...
-  
-  // Foca no campo de observação
-  document.getElementById('nova-observacao-texto').focus();
-  
-  // Rola até a seção de observações
-  document.getElementById('nova-observacao-texto').scrollIntoView({ behavior: 'smooth' });
-  
-  // Carrega as observações
-  carregarObservacoes(id);
-};
+window.registrarAtendimento = function(id) {
+  // 1. Verifica se o lead existe
+  if (!dados.leads[id]) {
+    alert('Cliente não encontrado!');
+    return;
+  }
 
+  // 2. Abre o formulário de edição
+  const formEdicao = document.getElementById('form-edicao');
+  formEdicao.classList.remove('hidden');
+
+  // 3. Preenche o ID do lead no formulário
+  document.getElementById('id-edicao').value = id;
+
+  // 4. Carrega os dados básicos do lead (opcional)
+  const lead = dados.leads[id];
+  document.getElementById('nome-edicao').value = lead.nome || '';
+  document.getElementById('email-edicao').value = lead.email || '';
+  // ... outros campos conforme necessário
+
+  // 5. Carrega as observações existentes
+  if (typeof carregarObservacoes === 'function') {
+    carregarObservacoes(id);
+  } else {
+    console.error('Função carregarObservacoes não encontrada');
+  }
+
+  // 6. Foca no campo de observação
+  const campoObservacao = document.getElementById('nova-observacao-texto');
+  if (campoObservacao) {
+    campoObservacao.focus();
+    
+    // 7. Rola suavemente até o campo
+    setTimeout(() => {
+      campoObservacao.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }, 300);
+  } else {
+    console.error('Campo de observação não encontrado');
+  }
+
+  // 8. Atualiza a data do último contato
+  const hoje = new Date().toISOString().split('T')[0];
+  document.getElementById('ultimo-contato-edicao').value = hoje;
+};
   // 7. Pesquisa de Clientes
   btnPesquisar.addEventListener('click', () => {
     carregarLeads(pesquisaInput.value);
