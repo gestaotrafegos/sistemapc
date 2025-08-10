@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão de Documentos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="pagina-secundaria">
+  <div class="container">
+    <header>
+      <h1>Gestão de Documentos</h1>
+      <button onclick="window.history.back()" class="btn btn-voltar">← Voltar</button>
+    </header>
+
+    <div class="document-manager-container">
+      <div class="current-step-container">
+        <h3 id="current-step-title">Etapa Atual: <span id="current-step-name"></span></h3>
+        <div class="step-actions">
+          <button id="btn-avancar-etapa" class="btn btn-primary">Avançar Etapa</button>
+          <button id="btn-enviar-email" class="btn btn-secondary">Enviar para Análise</button>
+        </div>
+      </div>
+
+      <div class="document-upload-section">
+        <h3>Anexar Documentos</h3>
+        <input type="file" id="document-upload" multiple>
+        <button id="btn-upload" class="btn btn-primary">Enviar Documentos</button>
+        <div id="uploaded-files-list" class="files-list">
+          <!-- Lista de arquivos enviados -->
+        </div>
+      </div>
+
+      <div class="email-section">
+        <h3>Enviar para Análise</h3>
+        <input type="email" id="email-gestor" placeholder="E-mail do gestor" value="palmapesquisa@gmail.com">
+        <textarea id="email-message" placeholder="Mensagem para o gestor"></textarea>
+        <button id="btn-enviar-email-confirm" class="btn btn-primary">Enviar E-mail</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="document-manager.js"></script>
+</body>
+</html>
