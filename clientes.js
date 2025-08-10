@@ -361,3 +361,41 @@ function exportarDados() {
   a.download = 'dados_clientes.json';
   a.click();
 }
+// Função para exportar dados
+function exportarParaExcel() {
+  // Converter os dados para formato CSV
+  const headers = ["Nome", "Telefone", "E-mail", "Interesse", "Corretor", "Último Contato", "Status"];
+  
+  // Obter os dados dos clientes
+  const rows = Object.values(dados.leads).map(lead => {
+    const corretor = dados.corretores[lead.corretor_id]?.nome || "Não atribuído";
+    return [
+      `"${lead.nome}"`,
+      `"${lead.telefone}"`,
+      `"${lead.email}"`,
+      `"${lead.interesse}"`,
+      `"${corretor}"`,
+      `"${lead.ultimo_contato}"`,
+      `"${lead.qualidade}"`
+    ].join(",");
+  });
+
+  // Criar conteúdo CSV
+  const csvContent = [
+    headers.join(","),
+    ...rows
+  ].join("\n");
+
+  // Criar arquivo e fazer download
+  const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "clientes_imobiliaria.csv";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// Adicionar evento ao botão de exportar
+document.getElementById('btn-exportar')?.addEventListener('click', exportarParaExcel);
