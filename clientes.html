@@ -124,6 +124,35 @@
         </div>
       </form>
     </div>
+  <!-- Modal de Criação de Timeline -->
+<div id="modal-timeline" class="modal hidden">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <h2>Criar Timeline para <span id="modal-cliente-nome"></span></h2>
+    
+    <form id="form-criar-timeline">
+      <div class="form-section">
+        <h3>Dados do Cliente</h3>
+        <div class="form-row">
+          <label>CPF:</label>
+          <input type="text" id="timeline-cpf" required>
+        </div>
+        <div class="form-row">
+          <label>RG:</label>
+          <input type="text" id="timeline-rg" required>
+        </div>
+        <div class="form-row">
+          <label>Data Nascimento:</label>
+          <input type="date" id="timeline-nascimento" required>
+        </div>
+      </div>
+
+      <div class="form-buttons">
+        <button type="submit" class="btn btn-primary">Continuar para Timeline</button>
+      </div>
+    </form>
+  </div>
+</div>
   <script src="clientes.js"></script>
 </body>
 </html>
