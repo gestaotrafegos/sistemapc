@@ -30,6 +30,7 @@ let dados = JSON.parse(localStorage.getItem('dadosImobiliaria')) || {
       observacoes: [
         {
           data: new Date().toISOString().split('T')[0],
+          titulo: "Primeiro contato",
           texto: "Cliente interessado no apartamento XYZ"
         }
       ]
@@ -164,9 +165,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 4. Editar Lead
- window.editarLead = function(id) {
-  const lead = dados.leads[id];
-  formEdicao.classList.remove('hidden');
+  window.editarLead = function(id) {
+    const lead = dados.leads[id];
+    formEdicao.classList.remove('hidden');
+    
     document.getElementById('id-edicao').value = id;
     document.getElementById('nome-edicao').value = lead.nome;
     document.getElementById('email-edicao').value = lead.email;
@@ -177,60 +179,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('ultimo-contato-edicao').value = lead.ultimo_contato;
     document.getElementById('status-edicao').value = lead.qualidade;
     
+    // Carrega as observações
+    if (typeof window.carregarObservacoes === 'function') {
+      window.carregarObservacoes(id);
+    }
+    
     formEdicao.scrollIntoView({ behavior: 'smooth' });
   };
-   carregarObservacoes(id);
-  
-  formEdicao.scrollIntoView({ behavior: 'smooth' });
-};
 
   document.getElementById('cancelar-edicao').addEventListener('click', () => {
     formEdicao.classList.add('hidden');
   });
-  document.getElementById('btn-timeline').addEventListener('click', () => {
-  const leadId = document.getElementById('id-edicao').value;
-  if (leadId) {
-    // Aqui você pode chamar a função que criará a timeline
-    criarTimeline(leadId);
-  } else {
-    alert('Selecione um cliente primeiro');
-  }
-});
-// Adicione este evento para o novo botão de observação
-document.getElementById('btn-adicionar-observacao').addEventListener('click', () => {
-  const leadId = document.getElementById('id-edicao').value;
-  const titulo = document.getElementById('nova-observacao-titulo').value;
-  const texto = document.getElementById('nova-observacao-texto').value;
-  
-  if (!texto) {
-    alert('Por favor, insira o texto da observação');
-    return;
-  }
-  
-  const hoje = new Date().toISOString().split('T')[0];
-  
-  if (!dados.leads[leadId].observacoes) {
-    dados.leads[leadId].observacoes = [];
-  }
-  
-  dados.leads[leadId].observacoes.push({
-    data: hoje,
-    titulo: titulo || 'Observação',
-    texto: texto
-  });
-  // Atualiza o último contato
-  dados.leads[leadId].ultimo_contato = hoje;
-  
-  salvarDados();
-  carregarObservacoes(leadId);
-  
-  // Limpa os campos
-  document.getElementById('nova-observacao-titulo').value = '';
-  document.getElementById('nova-observacao-texto').value = '';
-  
-  // Atualiza a lista de clientes (para mostrar novo último contato)
-  carregarLeads(pesquisaInput.value);
-});
+
   // 5. Salvar Edição
   formEdicaoCliente.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -254,55 +214,121 @@ document.getElementById('btn-adicionar-observacao').addEventListener('click', ()
     alert('Alterações salvas!');
   });
 
-  // 6. Registrar Atendimento
-window.registrarAtendimento = function(id) {
-  // 1. Verifica se o lead existe
-  if (!dados.leads[id]) {
-    alert('Cliente não encontrado!');
-    return;
-  }
+  // 6. Registrar Atendimento (VERSÃO CORRIGIDA)
+  window.registrarAtendimento = function(id) {
+    try {
+      // 1. Verifica se o lead existe
+      if (!dados.leads[id]) {
+        alert('Cliente não encontrado!');
+        return;
+      }
 
-  // 2. Abre o formulário de edição
-  const formEdicao = document.getElementById('form-edicao');
-  formEdicao.classList.remove('hidden');
+      // 2. Referências aos elementos do DOM
+      const formEdicao = document.getElementById('form-edicao');
+      const idField = document.getElementById('id-edicao');
+      const nomeField = document.getElementById('nome-edicao');
+      const emailField = document.getElementById('email-edicao');
+      const dataField = document.getElementById('ultimo-contato-edicao');
+      const campoObservacao = document.getElementById('nova-observacao-texto');
 
-  // 3. Preenche o ID do lead no formulário
-  document.getElementById('id-edicao').value = id;
+      // 3. Validações dos elementos
+      if (!formEdicao || !idField || !campoObservacao) {
+        throw new Error('Elementos do formulário não encontrados');
+      }
 
-  // 4. Carrega os dados básicos do lead (opcional)
-  const lead = dados.leads[id];
-  document.getElementById('nome-edicao').value = lead.nome || '';
-  document.getElementById('email-edicao').value = lead.email || '';
-  // ... outros campos conforme necessário
+      // 4. Abre o formulário de edição
+      formEdicao.classList.remove('hidden');
 
-  // 5. Carrega as observações existentes
-  if (typeof carregarObservacoes === 'function') {
-    carregarObservacoes(id);
-  } else {
-    console.error('Função carregarObservacoes não encontrada');
-  }
+      // 5. Preenche os dados básicos
+      const lead = dados.leads[id];
+      idField.value = id;
+      nomeField.value = lead.nome || '';
+      emailField.value = lead.email || '';
 
-  // 6. Foca no campo de observação
-  const campoObservacao = document.getElementById('nova-observacao-texto');
-  if (campoObservacao) {
-    campoObservacao.focus();
+      // 6. Atualiza a data do último contato
+      const hoje = new Date().toISOString().split('T')[0];
+      dataField.value = hoje;
+
+      // 7. Carrega as observações existentes
+      if (typeof window.carregarObservacoes === 'function') {
+        window.carregarObservacoes(id);
+      } else {
+        console.warn('Função carregarObservacoes não disponível');
+      }
+
+      // 8. Foca e rola até o campo de observações
+      setTimeout(() => {
+        campoObservacao.focus();
+        campoObservacao.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }, 100);
+
+    } catch (error) {
+      console.error('Erro em registrarAtendimento:', error);
+      alert('Erro ao registrar atendimento: ' + error.message);
+    }
+  };
+
+  // 7. Função para carregar observações
+  window.carregarObservacoes = function(leadId) {
+    const listaObservacoes = document.getElementById('lista-observacoes');
+    listaObservacoes.innerHTML = '';
     
-    // 7. Rola suavemente até o campo
-    setTimeout(() => {
-      campoObservacao.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
-    }, 300);
-  } else {
-    console.error('Campo de observação não encontrado');
-  }
+    const lead = dados.leads[leadId];
+    if (!lead || !lead.observacoes) return;
+    
+    lead.observacoes.forEach(obs => {
+      const divObs = document.createElement('div');
+      divObs.className = 'observacao-item';
+      divObs.innerHTML = `
+        <div class="observacao-titulo">${obs.titulo || 'Sem título'}</div>
+        <div class="observacao-data">${obs.data}</div>
+        <div class="observacao-texto">${obs.texto}</div>
+      `;
+      listaObservacoes.appendChild(divObs);
+    });
+  };
 
-  // 8. Atualiza a data do último contato
-  const hoje = new Date().toISOString().split('T')[0];
-  document.getElementById('ultimo-contato-edicao').value = hoje;
-};
-  // 7. Pesquisa de Clientes
+  // 8. Adicionar nova observação
+  document.getElementById('btn-adicionar-observacao').addEventListener('click', () => {
+    const leadId = document.getElementById('id-edicao').value;
+    const titulo = document.getElementById('nova-observacao-titulo').value;
+    const texto = document.getElementById('nova-observacao-texto').value;
+    
+    if (!texto) {
+      alert('Por favor, insira o texto da observação');
+      return;
+    }
+    
+    const hoje = new Date().toISOString().split('T')[0];
+    
+    if (!dados.leads[leadId].observacoes) {
+      dados.leads[leadId].observacoes = [];
+    }
+    
+    dados.leads[leadId].observacoes.push({
+      data: hoje,
+      titulo: titulo || 'Observação',
+      texto: texto
+    });
+    
+    // Atualiza o último contato
+    dados.leads[leadId].ultimo_contato = hoje;
+    
+    salvarDados();
+    window.carregarObservacoes(leadId);
+    
+    // Limpa os campos
+    document.getElementById('nova-observacao-titulo').value = '';
+    document.getElementById('nova-observacao-texto').value = '';
+    
+    // Atualiza a lista de clientes
+    carregarLeads(pesquisaInput.value);
+  });
+
+  // 9. Pesquisa de Clientes
   btnPesquisar.addEventListener('click', () => {
     carregarLeads(pesquisaInput.value);
   });
@@ -334,28 +360,4 @@ function exportarDados() {
   a.href = url;
   a.download = 'dados_clientes.json';
   a.click();
-}
-// Adicione esta função em algum lugar do seu arquivo JS
-function criarTimeline(leadId) {
-  const lead = dados.leads[leadId];
-  if (!lead) return;
-   alert(`Criando timeline para: ${lead.nome}\nID: ${leadId}`);
-  // Adicione esta função para carregar observações
-function carregarObservacoes(leadId) {
-  const listaObservacoes = document.getElementById('lista-observacoes');
-  listaObservacoes.innerHTML = '';
-  
-  const lead = dados.leads[leadId];
-  if (!lead || !lead.observacoes) return;
-  
-  lead.observacoes.forEach(obs => {
-    const divObs = document.createElement('div');
-    divObs.className = 'observacao-item';
-    divObs.innerHTML = `
-      <div class="observacao-titulo">${obs.titulo || 'Sem título'}</div>
-      <div class="observacao-data">${obs.data}</div>
-      <div class="observacao-texto">${obs.texto}</div>
-    `;
-    listaObservacoes.appendChild(divObs);
-  });
 }
