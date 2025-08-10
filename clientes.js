@@ -8,6 +8,12 @@ let dados = JSON.parse(localStorage.getItem('dadosImobiliaria')) || {
       nome: "João Silva",
       email: "joao@imobiliaria.com",
       telefone: "(11) 98765-4321"
+    },
+    corretor2: {
+      id: "corretor2",
+      nome: "Maria Souza",
+      email: "maria@imobiliaria.com",
+      telefone: "(11) 91234-5678"
     }
   },
   leads: {
@@ -20,10 +26,10 @@ let dados = JSON.parse(localStorage.getItem('dadosImobiliaria')) || {
       qualidade: "quente",
       corretor_id: "corretor1",
       interesse: "Apartamento",
-      ultimo_contato: "2023-11-20",
+      ultimo_contato: new Date().toISOString().split('T')[0],
       observacoes: [
         {
-          data: "2023-11-20",
+          data: new Date().toISOString().split('T')[0],
           texto: "Cliente interessado no apartamento XYZ"
         }
       ]
@@ -36,17 +42,44 @@ function salvarDados() {
   localStorage.setItem('dadosImobiliaria', JSON.stringify(dados));
 }
 
+// Função para calcular dias desde o último contato
+function calcularDiasSemContato(data) {
+  if (!data) return "Nunca";
+  
+  const hoje = new Date();
+  const ultimoContato = new Date(data);
+  const diffTime = Math.abs(hoje - ultimoContato);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  return diffDays === 0 ? "Hoje" : `${diffDays} dias`;
+}
+
 // =============================================
-// FUNÇÕES PRINCIPAIS (CORRIGIDAS)
+// FUNÇÕES PRINCIPAIS
 // =============================================
 document.addEventListener('DOMContentLoaded', () => {
   // Elementos DOM
   const toggleBtn = document.getElementById('toggle-cadastro');
   const formCadastro = document.getElementById('form-cadastro');
   const formEdicao = document.getElementById('form-edicao');
-  const tabelaClientes = document.getElementById('tabela-clientes');
+  const tabelaClientes = document.getElementById('tabela-clientes').querySelector('tbody');
   const formCadastroCliente = document.getElementById('cadastro-cliente');
   const formEdicaoCliente = document.getElementById('edicao-cliente');
+  const pesquisaInput = document.getElementById('pesquisa-cliente');
+  const btnPesquisar = document.getElementById('btn-pesquisar');
+  const btnLimpar = document.getElementById('btn-limpar');
+  
+  // Preencher selects de corretores
+  function preencherCorretores(selectElement) {
+    selectElement.innerHTML = '<option value="">Corretor Responsável</option>';
+    Object.values(dados.corretores).forEach(corretor => {
+      selectElement.innerHTML += `<option value="${corretor.id}">${corretor.nome}</option>`;
+    });
+  }
+  
+  // Preencher selects ao carregar
+  preencherCorretores(document.getElementById('corretor-cadastro'));
+  preencherCorretores(document.getElementById('corretor-edicao'));
 
   // 1. Controle do Formulário de Cadastro
   toggleBtn.addEventListener('click', () => {
@@ -55,32 +88,36 @@ document.addEventListener('DOMContentLoaded', () => {
       '+ Novo Cliente' : 'Cancelar';
   });
 
+  document.getElementById('cancelar-cadastro').addEventListener('click', () => {
+    formCadastro.classList.add('hidden');
+    toggleBtn.textContent = '+ Novo Cliente';
+  });
+
   // 2. Carregar Leads na Tabela
-  function carregarLeads() {
-    const tbody = tabelaClientes.querySelector('tbody') || tabelaClientes.createTBody();
-    tbody.innerHTML = '';
+  function carregarLeads(filtro = '') {
+    tabelaClientes.innerHTML = '';
     
-    // Cabeçalho se não existir
-    if (!tabelaClientes.tHead) {
-      const thead = tabelaClientes.createTHead();
-      thead.innerHTML = `
-        <tr>
-          <th>Nome</th>
-          <th>Telefone</th>
-          <th>Interesse</th>
-          <th>Status</th>
-          <th>Ações</th>
-        </tr>
-      `;
-    }
+    const leadsFiltrados = Object.values(dados.leads).filter(lead => {
+      if (!filtro) return true;
+      const termo = filtro.toLowerCase();
+      return (
+        lead.nome.toLowerCase().includes(termo) ||
+        lead.telefone.toLowerCase().includes(termo) ||
+        lead.email.toLowerCase().includes(termo) ||
+        lead.interesse.toLowerCase().includes(termo) ||
+        (dados.corretores[lead.corretor_id]?.nome.toLowerCase().includes(termo) || '')
+      );
+    });
     
-    Object.values(dados.leads).forEach(lead => {
-      const row = tbody.insertRow();
+    leadsFiltrados.forEach(lead => {
+      const corretor = dados.corretores[lead.corretor_id] || { nome: 'Não atribuído' };
+      const row = tabelaClientes.insertRow();
       row.innerHTML = `
         <td>${lead.nome}</td>
         <td>${lead.telefone}</td>
         <td>${lead.interesse}</td>
-        <td>${lead.qualidade}</td>
+        <td>${corretor.nome}</td>
+        <td>${calcularDiasSemContato(lead.ultimo_contato)}</td>
         <td>
           <button onclick="editarLead('${lead.id}')" class="btn-editar">✏️ Editar</button>
           <button onclick="registrarAtendimento('${lead.id}')" class="btn-atendimento">📞 Atendimento</button>
@@ -89,40 +126,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 3. Cadastrar Novo Lead (CORRIGIDO)
+  // 3. Cadastrar Novo Lead
   formCadastroCliente.addEventListener('submit', (e) => {
     e.preventDefault();
     
-    const form = e.target;
-    const nomeInput = form.querySelector('input[type="text"]');
-    const emailInput = form.querySelector('input[type="email"]');
+    const nome = document.getElementById('nome-cadastro').value;
+    const email = document.getElementById('email-cadastro').value;
     
     // Validação simples
-    if (!nomeInput.value || !emailInput.value) {
+    if (!nome || !email) {
       alert('Nome e e-mail são obrigatórios!');
       return;
     }
     
     const novoLeadId = 'lead' + (Object.keys(dados.leads).length + 1);
+    const hoje = new Date().toISOString().split('T')[0];
     
     dados.leads[novoLeadId] = {
       id: novoLeadId,
-      nome: nomeInput.value,
-      email: emailInput.value,
-      telefone: form.querySelector('input[type="tel"]').value || '',
-      interesse: form.querySelector('select').value,
+      nome: nome,
+      email: email,
+      cpf: document.getElementById('cpf-cadastro').value,
+      telefone: document.getElementById('telefone-cadastro').value,
+      interesse: document.getElementById('interesse-cadastro').value,
       qualidade: "quente",
-      corretor_id: "corretor1", // CORREÇÃO: estava "corretor1"
-      ultimo_contato: new Date().toISOString().split('T')[0],
+      corretor_id: document.getElementById('corretor-cadastro').value,
+      ultimo_contato: hoje,
       observacoes: []
     };
     
-    salvarDados(); // Persiste os dados
-    form.reset();
+    salvarDados();
+    formCadastroCliente.reset();
     formCadastro.classList.add('hidden');
     toggleBtn.textContent = '+ Novo Cliente';
     carregarLeads();
-    alert('Lead cadastrado com sucesso!');
+    alert('Cliente cadastrado com sucesso!');
   });
 
   // 4. Editar Lead
@@ -130,34 +168,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const lead = dados.leads[id];
     formEdicao.classList.remove('hidden');
     
-    const form = formEdicaoCliente;
-    form.dataset.leadId = id;
-    form.querySelector('input[type="text"]').value = lead.nome;
-    form.querySelector('input[type="email"]').value = lead.email;
-    form.querySelector('input[type="tel"]').value = lead.telefone;
-    form.querySelector('select').value = lead.interesse;
-    form.querySelector('input[type="date"]').value = lead.ultimo_contato;
+    document.getElementById('id-edicao').value = id;
+    document.getElementById('nome-edicao').value = lead.nome;
+    document.getElementById('email-edicao').value = lead.email;
+    document.getElementById('telefone-edicao').value = lead.telefone;
+    document.getElementById('cpf-edicao').value = lead.cpf || '';
+    document.getElementById('interesse-edicao').value = lead.interesse;
+    document.getElementById('corretor-edicao').value = lead.corretor_id;
+    document.getElementById('ultimo-contato-edicao').value = lead.ultimo_contato;
+    document.getElementById('status-edicao').value = lead.qualidade;
     
     formEdicao.scrollIntoView({ behavior: 'smooth' });
   };
 
+  document.getElementById('cancelar-edicao').addEventListener('click', () => {
+    formEdicao.classList.add('hidden');
+  });
+
   // 5. Salvar Edição
   formEdicaoCliente.addEventListener('submit', (e) => {
     e.preventDefault();
-    const form = e.target;
-    const leadId = form.dataset.leadId;
+    const leadId = document.getElementById('id-edicao').value;
     
     dados.leads[leadId] = {
       ...dados.leads[leadId],
-      nome: form.querySelector('input[type="text"]').value,
-      email: form.querySelector('input[type="email"]').value,
-      telefone: form.querySelector('input[type="tel"]').value,
-      interesse: form.querySelector('select').value,
-      ultimo_contato: form.querySelector('input[type="date"]').value
+      nome: document.getElementById('nome-edicao').value,
+      email: document.getElementById('email-edicao').value,
+      telefone: document.getElementById('telefone-edicao').value,
+      cpf: document.getElementById('cpf-edicao').value,
+      interesse: document.getElementById('interesse-edicao').value,
+      corretor_id: document.getElementById('corretor-edicao').value,
+      ultimo_contato: document.getElementById('ultimo-contato-edicao').value,
+      qualidade: document.getElementById('status-edicao').value
     };
     
+    salvarDados();
     formEdicao.classList.add('hidden');
-    carregarLeads();
+    carregarLeads(pesquisaInput.value);
     alert('Alterações salvas!');
   });
 
@@ -165,34 +212,35 @@ document.addEventListener('DOMContentLoaded', () => {
   window.registrarAtendimento = function(id) {
     const texto = prompt("Registre o atendimento:");
     if (texto) {
+      const hoje = new Date().toISOString().split('T')[0];
       dados.leads[id].observacoes.push({
-        data: new Date().toISOString().split('T')[0],
+        data: hoje,
         texto: texto
       });
+      dados.leads[id].ultimo_contato = hoje;
+      salvarDados();
+      carregarLeads(pesquisaInput.value);
       alert('Atendimento registrado!');
     }
   };
 
+  // 7. Pesquisa de Clientes
+  btnPesquisar.addEventListener('click', () => {
+    carregarLeads(pesquisaInput.value);
+  });
+
+  pesquisaInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      carregarLeads(pesquisaInput.value);
+    }
+  });
+
+  btnLimpar.addEventListener('click', () => {
+    pesquisaInput.value = '';
+    carregarLeads();
+  });
+
   // Inicialização
-  carregarLeads();
-});
-
-// =============================================
-// FUNCIONALIDADES EXTRAS
-// =============================================
-function exportarDados() {
-  const dataStr = JSON.stringify(dados, null, 2);
-  const blob = new Blob([dataStr], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'dados_clientes.json';
-  a.click();
-}
-
-// (Adicione um botão no HTML para chamar: <button onclick="exportarDados()">Exportar Dados</button>)
-// Inicialização
   carregarLeads();
 });
 
