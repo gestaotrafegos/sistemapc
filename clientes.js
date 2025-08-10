@@ -161,6 +161,46 @@ document.addEventListener('DOMContentLoaded', () => {
     alert('Cliente cadastrado com sucesso!');
   });
 
+  // Configurar edição de leads
+  formEdicaoCliente.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const leadId = document.getElementById('id-edicao').value;
+    const lead = dados.leads[leadId];
+    
+    lead.nome = document.getElementById('nome-edicao').value;
+    lead.email = document.getElementById('email-edicao').value;
+    lead.telefone = document.getElementById('telefone-edicao').value;
+    lead.cpf = document.getElementById('cpf-edicao').value;
+    lead.interesse = document.getElementById('interesse-edicao').value;
+    lead.corretor_id = document.getElementById('corretor-edicao').value;
+    lead.ultimo_contato = document.getElementById('ultimo-contato-edicao').value;
+    lead.qualidade = document.getElementById('status-edicao').value;
+    
+    salvarDados();
+    formEdicao.classList.add('hidden');
+    carregarLeads();
+    alert('Dados do cliente atualizados com sucesso!');
+  });
+
+  // Configurar botão cancelar edição
+  document.getElementById('cancelar-edicao').addEventListener('click', function() {
+    formEdicao.classList.add('hidden');
+  });
+
+  // Configurar pesquisa
+  btnPesquisar.addEventListener('click', function() {
+    carregarLeads(pesquisaInput.value);
+  });
+
+  // Configurar limpar pesquisa
+  btnLimpar.addEventListener('click', function() {
+    pesquisaInput.value = '';
+    carregarLeads();
+  });
+
+  // Configurar exportação
+  document.getElementById('btn-exportar').addEventListener('click', exportarDados);
+
   // Inicialização
   carregarLeads();
 });
@@ -168,6 +208,25 @@ document.addEventListener('DOMContentLoaded', () => {
 // =============================================
 // FUNÇÕES GLOBAIS
 // =============================================
+
+// Carregar Observações
+window.carregarObservacoes = function(leadId) {
+  const lead = dados.leads[leadId];
+  const listaObservacoes = document.getElementById('lista-observacoes');
+  
+  listaObservacoes.innerHTML = '';
+  
+  if (lead.observacoes && lead.observacoes.length > 0) {
+    lead.observacoes.forEach(obs => {
+      const div = document.createElement('div');
+      div.className = 'observacao-item';
+      div.innerHTML = `<strong>${obs.data}:</strong> ${obs.texto}`;
+      listaObservacoes.appendChild(div);
+    });
+  } else {
+    listaObservacoes.innerHTML = '<p>Nenhuma observação registrada</p>';
+  }
+};
 
 // Editar Lead
 window.editarLead = function(id) {
@@ -185,10 +244,7 @@ window.editarLead = function(id) {
   document.getElementById('ultimo-contato-edicao').value = lead.ultimo_contato;
   document.getElementById('status-edicao').value = lead.qualidade;
   
-  if (typeof window.carregarObservacoes === 'function') {
-    window.carregarObservacoes(id);
-  }
-  
+  window.carregarObservacoes(id);
   formEdicao.scrollIntoView({ behavior: 'smooth' });
 };
 
@@ -207,10 +263,20 @@ window.registrarAtendimento = function(id) {
     dados.leads[id].ultimo_contato = hoje;
     salvarDados();
     alert('Atendimento registrado!');
+    
+    // Recarregar observações se estiver na tela de edição
+    if (document.getElementById('id-edicao').value === id) {
+      window.carregarObservacoes(id);
+    }
+    
+    // Recarregar lista de leads
+    if (window.location.pathname.includes('clientes.html')) {
+      document.dispatchEvent(new Event('DOMContentLoaded'));
+    }
   }
 };
 
-// Criar Timeline - Versão melhorada
+// Criar Timeline
 window.criarTimeline = function(leadId) {
   const lead = dados.leads[leadId];
   if (!lead) {
@@ -228,18 +294,13 @@ window.criarTimeline = function(leadId) {
   // Armazenar lead ID no formulário
   form.dataset.leadId = leadId;
   
-  // Configurar fechamento do modal
-  document.querySelector('.close-modal').onclick = () => modal.classList.add('hidden');
-  
   // Mostrar modal
   modal.classList.remove('hidden');
-
-  // Focar no primeiro campo
   document.getElementById('timeline-cpf').focus();
 };
 
 // Configurar submit do formulário de timeline
-document.getElementById('form-criar-timeline')?.addEventListener('submit', function(e) {
+document.getElementById('form-criar-timeline').addEventListener('submit', function(e) {
   e.preventDefault();
   
   const leadId = this.dataset.leadId;
