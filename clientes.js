@@ -164,10 +164,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 4. Editar Lead
-  window.editarLead = function(id) {
-    const lead = dados.leads[id];
-    formEdicao.classList.remove('hidden');
-    
+ window.editarLead = function(id) {
+  const lead = dados.leads[id];
+  formEdicao.classList.remove('hidden');
     document.getElementById('id-edicao').value = id;
     document.getElementById('nome-edicao').value = lead.nome;
     document.getElementById('email-edicao').value = lead.email;
@@ -180,6 +179,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     formEdicao.scrollIntoView({ behavior: 'smooth' });
   };
+   carregarObservacoes(id);
+  
+  formEdicao.scrollIntoView({ behavior: 'smooth' });
+};
 
   document.getElementById('cancelar-edicao').addEventListener('click', () => {
     formEdicao.classList.add('hidden');
@@ -193,7 +196,41 @@ document.addEventListener('DOMContentLoaded', () => {
     alert('Selecione um cliente primeiro');
   }
 });
-
+// Adicione este evento para o novo botão de observação
+document.getElementById('btn-adicionar-observacao').addEventListener('click', () => {
+  const leadId = document.getElementById('id-edicao').value;
+  const titulo = document.getElementById('nova-observacao-titulo').value;
+  const texto = document.getElementById('nova-observacao-texto').value;
+  
+  if (!texto) {
+    alert('Por favor, insira o texto da observação');
+    return;
+  }
+  
+  const hoje = new Date().toISOString().split('T')[0];
+  
+  if (!dados.leads[leadId].observacoes) {
+    dados.leads[leadId].observacoes = [];
+  }
+  
+  dados.leads[leadId].observacoes.push({
+    data: hoje,
+    titulo: titulo || 'Observação',
+    texto: texto
+  });
+  // Atualiza o último contato
+  dados.leads[leadId].ultimo_contato = hoje;
+  
+  salvarDados();
+  carregarObservacoes(leadId);
+  
+  // Limpa os campos
+  document.getElementById('nova-observacao-titulo').value = '';
+  document.getElementById('nova-observacao-texto').value = '';
+  
+  // Atualiza a lista de clientes (para mostrar novo último contato)
+  carregarLeads(pesquisaInput.value);
+});
   // 5. Salvar Edição
   formEdicaoCliente.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -218,20 +255,22 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 6. Registrar Atendimento
-  window.registrarAtendimento = function(id) {
-    const texto = prompt("Registre o atendimento:");
-    if (texto) {
-      const hoje = new Date().toISOString().split('T')[0];
-      dados.leads[id].observacoes.push({
-        data: hoje,
-        texto: texto
-      });
-      dados.leads[id].ultimo_contato = hoje;
-      salvarDados();
-      carregarLeads(pesquisaInput.value);
-      alert('Atendimento registrado!');
-    }
-  };
+ window.registrarAtendimento = function(id) {
+  const lead = dados.leads[id];
+  formEdicao.classList.remove('hidden');
+  document.getElementById('id-edicao').value = id;
+  
+  // Preenche os campos existentes...
+  
+  // Foca no campo de observação
+  document.getElementById('nova-observacao-texto').focus();
+  
+  // Rola até a seção de observações
+  document.getElementById('nova-observacao-texto').scrollIntoView({ behavior: 'smooth' });
+  
+  // Carrega as observações
+  carregarObservacoes(id);
+};
 
   // 7. Pesquisa de Clientes
   btnPesquisar.addEventListener('click', () => {
@@ -271,3 +310,22 @@ function criarTimeline(leadId) {
   const lead = dados.leads[leadId];
   if (!lead) return;
    alert(`Criando timeline para: ${lead.nome}\nID: ${leadId}`);
+  // Adicione esta função para carregar observações
+function carregarObservacoes(leadId) {
+  const listaObservacoes = document.getElementById('lista-observacoes');
+  listaObservacoes.innerHTML = '';
+  
+  const lead = dados.leads[leadId];
+  if (!lead || !lead.observacoes) return;
+  
+  lead.observacoes.forEach(obs => {
+    const divObs = document.createElement('div');
+    divObs.className = 'observacao-item';
+    divObs.innerHTML = `
+      <div class="observacao-titulo">${obs.titulo || 'Sem título'}</div>
+      <div class="observacao-data">${obs.data}</div>
+      <div class="observacao-texto">${obs.texto}</div>
+    `;
+    listaObservacoes.appendChild(divObs);
+  });
+}
