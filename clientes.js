@@ -210,7 +210,6 @@ window.registrarAtendimento = function(id) {
   }
 };
 
-// Criar Timeline
 window.criarTimeline = function(leadId) {
   const lead = dados.leads[leadId];
   if (!lead) {
@@ -218,8 +217,52 @@ window.criarTimeline = function(leadId) {
     return;
   }
 
-  sessionStorage.setItem('leadTimelineAtual', leadId);
-  window.location.href = 'timelines.html';
+  // Preenche o modal com dados básicos
+  document.getElementById('modal-cliente-nome').textContent = lead.nome;
+  
+  // Se já existir CPF no lead, preenche automaticamente
+  if (lead.cpf) {
+    document.getElementById('timeline-cpf').value = lead.cpf;
+  }
+
+  // Mostra o modal
+  document.getElementById('modal-timeline').classList.remove('hidden');
+
+  // Configura o formulário do modal
+  document.getElementById('form-criar-timeline').onsubmit = function(e) {
+    e.preventDefault();
+    
+    // Cria a estrutura básica da timeline
+    if (!lead.timeline) {
+      lead.timeline = {
+        etapaAtual: 'documentacao',
+        criadoEm: new Date().toISOString(),
+        documentos: []
+      };
+    }
+
+    // Atualiza dados do cliente
+    lead.timeline.dadosCliente = {
+      cpf: document.getElementById('timeline-cpf').value,
+      rg: document.getElementById('timeline-rg').value,
+      nascimento: document.getElementById('timeline-nascimento').value
+    };
+
+    // Atualiza também no cadastro principal
+    lead.cpf = document.getElementById('timeline-cpf').value;
+
+    salvarDados();
+    
+    // Fecha o modal e redireciona
+    document.getElementById('modal-timeline').classList.add('hidden');
+    sessionStorage.setItem('leadTimelineAtual', leadId);
+    window.location.href = 'timeline.html';
+  };
+
+  // Fechar modal
+  document.querySelector('.close-modal').onclick = function() {
+    document.getElementById('modal-timeline').classList.add('hidden');
+  };
 };
 
 // =============================================
