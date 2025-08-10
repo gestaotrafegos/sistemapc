@@ -2,25 +2,20 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Clientes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão de Clientes</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="pagina-secundaria">
-  <div class="container-secundario">
-    <!-- Seu conteúdo aqui -->
-    <table id="tabela-clientes">...</table>
-  </div>
-</head>
-<body>
   <div class="container">
     <!-- Cabeçalho -->
     <header>
       <h1>Gestão de Clientes</h1>
-      <button onclick="window.history.back()" class="btn-voltar">← Voltar</button>
+      <button onclick="window.history.back()" class="btn btn-voltar">← Voltar</button>
     </header>
 
     <!-- Botão para mostrar/ocultar cadastro -->
-    <button id="toggle-cadastro" class="btn">+ Novo Cliente</button>
+    <button id="toggle-cadastro" class="btn btn-primary">+ Novo Cliente</button>
 
     <!-- Formulário de Cadastro (oculto inicialmente) -->
     <div id="form-cadastro" class="hidden">
@@ -32,13 +27,13 @@
         </div>
         <div class="form-row">
           <input type="tel" placeholder="Telefone">
-          <select>
-            <option>Tipo de Interesse</option>
-            <option>Casa</option>
-            <option>Apartamento</option>
+          <select required>
+            <option value="">Tipo de Interesse</option>
+            <option value="Casa">Casa</option>
+            <option value="Apartamento">Apartamento</option>
           </select>
         </div>
-        <button type="submit" class="btn-salvar">Salvar</button>
+        <button type="submit" class="btn btn-primary">Salvar</button>
       </form>
     </div>
 
@@ -46,12 +41,23 @@
     <div id="lista-clientes">
       <h2>Clientes Cadastrados</h2>
       <table id="tabela-clientes">
-        <!-- Preenchido via JavaScript -->
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Telefone</th>
+            <th>Interesse</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Conteúdo dinâmico via JS -->
+        </tbody>
       </table>
     </div>
 
-    <!-- Formulário de Edição (horizontal e oculto) -->
-    <div id="form-edicao" class="hidden horizontal-form">
+    <!-- Formulário de Edição (oculto inicialmente) -->
+    <div id="form-edicao" class="hidden">
       <h2>Editar Cliente</h2>
       <form id="edicao-cliente">
         <div class="form-row">
@@ -60,21 +66,20 @@
           <input type="tel" placeholder="Telefone">
         </div>
         <div class="form-row">
-          <select>
-            <option>Interessado em Casa</option>
-            <option>Interessado em Apartamento</option>
+          <select required>
+            <option value="Casa">Interessado em Casa</option>
+            <option value="Apartamento">Interessado em Apartamento</option>
           </select>
           <input type="date" placeholder="Último contato">
         </div>
         <div class="form-buttons">
-          <button type="button" class="btn-atendimento">📞 Registrar Atendimento</button>
-          <button type="submit" class="btn-salvar">💾 Salvar Alterações</button>
+          <button type="button" class="btn btn-atendimento">📞 Registrar Atendimento</button>
+          <button type="submit" class="btn btn-salvar">💾 Salvar Alterações</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Scripts -->
   <script src="clientes.js"></script>
 </body>
 </html>
