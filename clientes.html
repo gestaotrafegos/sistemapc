@@ -14,15 +14,14 @@
       <button onclick="window.history.back()" class="btn btn-voltar">← Voltar</button>
     </header>
 
-    <!-- Barra de Pesquisa -->
+    <!-- Barra de Pesquisa e Ações -->
     <div class="search-container">
       <input type="text" id="pesquisa-cliente" placeholder="Pesquisar clientes..." class="form-row input">
       <button id="btn-pesquisar" class="btn btn-primary">Buscar</button>
       <button id="btn-limpar" class="btn btn-voltar">Limpar</button>
+      <button id="btn-exportar" class="btn btn-export">↓ Exportar Dados</button>
     </div>
-    <button id="btn-exportar" class="btn btn-export">↓ Exportar Dados</button>
-</div>
-  
+
     <!-- Botão para mostrar/ocultar cadastro -->
     <button id="toggle-cadastro" class="btn btn-primary">+ Novo Cliente</button>
 
@@ -106,53 +105,65 @@
           <input type="text" id="status-edicao" placeholder="Status (quente/morno/frio)">
         </div>
         <div class="form-row">
-  <div style="width: 100%;">
-    <h3>Observações/Atendimentos</h3>
-    <div id="lista-observacoes" style="max-height: 150px; overflow-y: auto; margin-bottom: 10px; border: 1px solid #ddd; padding: 10px;"></div>
-    <div class="form-row">
-      <input type="text" id="nova-observacao-titulo" placeholder="Título" style="flex: 1;">
-      <textarea id="nova-observacao-texto" placeholder="Registre suas observações..." style="flex: 3; min-height: 80px;"></textarea>
-    </div>
-    <button type="button" id="btn-adicionar-observacao" class="btn" style="background-color: #3498db; color: white;">➕ Adicionar Observação</button>
-  </div>
-</div>
+          <div style="width: 100%;">
+            <h3>Observações/Atendimentos</h3>
+            <div id="lista-observacoes" style="max-height: 150px; overflow-y: auto; margin-bottom: 10px; border: 1px solid #ddd; padding: 10px;"></div>
+            <div class="form-row">
+              <input type="text" id="nova-observacao-titulo" placeholder="Título" style="flex: 1;">
+              <textarea id="nova-observacao-texto" placeholder="Registre suas observações..." style="flex: 3; min-height: 80px;"></textarea>
+            </div>
+            <button type="button" id="btn-adicionar-observacao" class="btn" style="background-color: #3498db; color: white;">➕ Adicionar Observação</button>
+          </div>
+        </div>
         <div class="form-buttons">
           <button type="button" id="btn-atendimento" class="btn btn-atendimento">📞 Registrar Atendimento</button>
           <button type="submit" class="btn btn-salvar">💾 Salvar Alterações</button>
           <button type="button" id="cancelar-edicao" class="btn btn-voltar">Cancelar</button>
-          <button type="button" id="btn-timeline" class="btn" style="background-color: #9b59b6; color: white;">⏳ Criar Timeline</button>
+          <button type="button" id="btn-timeline" class="btn btn-timeline">⏳ Criar Timeline</button>
         </div>
       </form>
     </div>
-  <!-- Modal de Criação de Timeline -->
-<div id="modal-timeline" class="modal hidden">
-  <div class="modal-content">
-    <span class="close-modal">&times;</span>
-    <h2>Criar Timeline para <span id="modal-cliente-nome"></span></h2>
-    
-    <form id="form-criar-timeline">
-      <div class="form-section">
-        <h3>Dados do Cliente</h3>
-        <div class="form-row">
-          <label>CPF:</label>
-          <input type="text" id="timeline-cpf" required>
-        </div>
-        <div class="form-row">
-          <label>RG:</label>
-          <input type="text" id="timeline-rg" required>
-        </div>
-        <div class="form-row">
-          <label>Data Nascimento:</label>
-          <input type="date" id="timeline-nascimento" required>
-        </div>
-      </div>
-
-      <div class="form-buttons">
-        <button type="submit" class="btn btn-primary">Continuar para Timeline</button>
-      </div>
-    </form>
   </div>
-</div>
+
+  <!-- Modal de Criação de Timeline -->
+  <div id="modal-timeline" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Criar Timeline para <span id="modal-cliente-nome"></span></h2>
+      
+      <form id="form-criar-timeline">
+        <div class="form-section">
+          <h3>Dados Obrigatórios</h3>
+          <div class="form-row">
+            <input type="text" id="timeline-cpf" placeholder="CPF" required>
+            <input type="text" id="timeline-rg" placeholder="RG" required>
+          </div>
+          <div class="form-row">
+            <input type="date" id="timeline-nascimento" placeholder="Data Nascimento" required>
+            <input type="text" id="timeline-cep" placeholder="CEP" required>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>Dados de Renda</h3>
+          <div class="form-row">
+            <input type="number" id="timeline-renda" placeholder="Renda Bruta" required>
+            <select id="timeline-fgts" required>
+              <option value="">FGTS +3 anos?</option>
+              <option value="sim">Sim</option>
+              <option value="nao">Não</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-buttons">
+          <button type="submit" class="btn btn-primary">Criar Timeline</button>
+          <button type="button" class="btn btn-voltar close-modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="clientes.js"></script>
 </body>
 </html>
