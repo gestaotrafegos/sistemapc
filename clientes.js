@@ -338,7 +338,7 @@ document.getElementById('form-criar-timeline').addEventListener('submit', functi
 
   // Criar/atualizar timeline
   lead.timeline = {
-    etapaAtual: 'documentacao',
+    etapaAtual: 'envio de documentação',
     criadoEm: new Date().toISOString(),
     cliente1: {
       nome: document.getElementById('cliente1-nome').value,
@@ -357,7 +357,8 @@ document.getElementById('form-criar-timeline').addEventListener('submit', functi
     cliente2: {
       nome: document.getElementById('cliente2-nome').value,
       telefone: document.getElementById('cliente2-telefone').value,
-      cpf: document.getElementById('cliente2-cpf').value
+      cpf: document.getElementById('cliente2-cpf').value,
+      nascimento: document.getElementById('cliente2-nascimento').value
     },
     renda: {
       bruta: formatarMoeda(document.getElementById('renda-bruta').value),
