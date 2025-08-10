@@ -3,44 +3,68 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Timeline de Financiamento</title>
+  <title>Gestão de Timelines</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="pagina-secundaria">
   <div class="container">
     <header>
-      <h1>Timeline de Financiamento</h1>
+      <h1>Gestão de Timelines</h1>
       <button onclick="window.history.back()" class="btn btn-voltar">← Voltar</button>
     </header>
 
-    <div id="timeline-container">
-      <div class="timeline-header">
-        <h2 id="timeline-cliente-nome"></h2>
-        <div class="timeline-status">
-          Status: <span id="timeline-status" class="status-badge"></span>
-        </div>
+    <!-- Barra de Pesquisa e Filtros -->
+    <div class="search-filters-container">
+      <div class="search-bar">
+        <input type="text" id="pesquisa-timeline" placeholder="Pesquisar por nome do cliente..." class="search-input">
+        <button id="btn-pesquisar-timeline" class="btn btn-primary">Buscar</button>
       </div>
-
-      <div class="timeline-flow">
-        <!-- Etapas serão preenchidas via JS -->
+      
+      <div class="filters-row">
+        <select id="filtro-corretor" class="filter-select">
+          <option value="">Todos os corretores</option>
+        </select>
+        
+        <select id="filtro-status" class="filter-select">
+          <option value="">Todos os status</option>
+          <option value="documentacao">Documentação</option>
+          <option value="analise">Análise</option>
+          <option value="aprovacao">Aprovação</option>
+          <option value="contrato">Contrato</option>
+          <option value="finalizado">Finalizado</option>
+        </select>
+        
+        <select id="filtro-periodo" class="filter-select">
+          <option value="">Todo período</option>
+          <option value="7">Últimos 7 dias</option>
+          <option value="30">Últimos 30 dias</option>
+          <option value="90">Últimos 3 meses</option>
+        </select>
+        
+        <button id="btn-limpar-filtros" class="btn btn-voltar">Limpar Filtros</button>
       </div>
+    </div>
 
-      <div class="timeline-content">
-        <div class="document-section">
-          <h3>Anexar Documentos</h3>
-          <input type="file" id="document-upload" multiple>
-          <button id="btn-upload" class="btn btn-primary">Enviar Documentos</button>
-          <div id="document-list"></div>
-        </div>
-
-        <div class="actions-section">
-          <button id="btn-avancar-etapa" class="btn btn-primary">Avançar Etapa</button>
-          <button id="btn-enviar-email" class="btn btn-secondary">Enviar para Análise</button>
-        </div>
-      </div>
+    <!-- Tabela de Timelines -->
+    <div class="table-container">
+      <table id="tabela-timelines">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Corretor</th>
+            <th>Status</th>
+            <th>Criação</th>
+            <th>Última Atualização</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Conteúdo dinâmico via JS -->
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <script src="timeline.js"></script>
+  <script src="timelines.js"></script>
 </body>
 </html>
