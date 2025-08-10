@@ -5,14 +5,14 @@ let dados = JSON.parse(localStorage.getItem('dadosImobiliaria')) || {
   corretores: {
     corretor1: {
       id: "corretor1",
-      nome: "João Silva",
-      email: "joao@imobiliaria.com",
+      nome: "Linconl Rangel",
+      email: "linconl@imobiliaria.com",
       telefone: "(11) 98765-4321"
     },
     corretor2: {
       id: "corretor2",
-      nome: "Maria Souza",
-      email: "maria@imobiliaria.com",
+      nome: "Luiz Palma",
+      email: "Luiz@imobiliaria.com",
       telefone: "(11) 91234-5678"
     }
   },
@@ -210,7 +210,7 @@ window.registrarAtendimento = function(id) {
   }
 };
 
-// Criar Timeline
+// Criar Timeline - Versão melhorada
 window.criarTimeline = function(leadId) {
   const lead = dados.leads[leadId];
   if (!lead) {
@@ -218,119 +218,28 @@ window.criarTimeline = function(leadId) {
     return;
   }
 
-  // Configurar modal
   const modal = document.getElementById('modal-timeline');
-  document.getElementById('modal-cliente-nome').textContent = lead.nome;
+  const form = document.getElementById('form-criar-timeline');
   
-  // Preencher dados existentes
+  // Preencher dados iniciais
+  document.getElementById('modal-cliente-nome').textContent = lead.nome;
   if (lead.cpf) document.getElementById('timeline-cpf').value = lead.cpf;
+  
+  // Armazenar lead ID no formulário
+  form.dataset.leadId = leadId;
+  
+  // Configurar fechamento do modal
+  document.querySelector('.close-modal').onclick = () => modal.classList.add('hidden');
   
   // Mostrar modal
   modal.classList.remove('hidden');
 
-  // Fechar modal
-  document.querySelector('.close-modal').onclick = function() {
-    modal.classList.add('hidden');
-  };
-
-  // Configurar envio do formulário
-  document.getElementById('form-criar-timeline').onsubmit = function(e) {
-    e.preventDefault();
-    
-    // Validar campos obrigatórios
-    const camposObrigatorios = [
-      'timeline-cpf', 'timeline-rg', 
-      'timeline-nascimento', 'timeline-cep',
-      'timeline-renda', 'timeline-fgts'
-    ];
-    
-    let isValid = true;
-    camposObrigatorios.forEach(id => {
-      const campo = document.getElementById(id);
-      if (!campo.value) {
-        campo.style.border = '1px solid red';
-        isValid = false;
-      } else {
-        campo.style.border = '';
-      }
-    });
-    
-    if (!isValid) {
-      alert('Por favor, preencha todos os campos obrigatórios!');
-      return;
-    }
-
-    // Criar/atualizar timeline
-    lead.timeline = {
-      etapaAtual: 'documentacao',
-      criadoEm: new Date().toISOString(),
-      dadosCliente: {
-        cpf: document.getElementById('timeline-cpf').value,
-        rg: document.getElementById('timeline-rg').value,
-        nascimento: document.getElementById('timeline-nascimento').value,
-        cep: document.getElementById('timeline-cep').value
-      },
-      renda: {
-        valor: document.getElementById('timeline-renda').value,
-        fgts: document.getElementById('timeline-fgts').value
-      },
-      documentos: []
-    };
-
-    // Atualizar dados principais do lead
-    lead.cpf = document.getElementById('timeline-cpf').value;
-    
-    salvarDados();
-    modal.classList.add('hidden');
-    alert('Timeline criada com sucesso!');
-    
-    // Redirecionar para a página da timeline
-    sessionStorage.setItem('leadTimelineAtual', leadId);
-    window.location.href = 'timeline.html';
-  };
+  // Focar no primeiro campo
+  document.getElementById('timeline-cpf').focus();
 };
 
-// =============================================
-// FUNCIONALIDADES EXTRAS
-// =============================================
-function exportarDados() {
-  const dataStr = JSON.stringify(dados, null, 2);
-  const blob = new Blob([dataStr], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'dados_clientes.json';
-  a.click();
-}
-// Adicione estas funções globais:
-
-// Função para abrir o modal de timeline
-window.criarTimeline = function(leadId) {
-  const lead = dados.leads[leadId];
-  if (!lead) {
-    alert('Cliente não encontrado!');
-    return;
-  }
-
-  // Preenche os dados iniciais
-  document.getElementById('modal-cliente-nome').textContent = lead.nome;
-  if (lead.cpf) document.getElementById('timeline-cpf').value = lead.cpf;
-  
-  // Armazena o ID do lead no formulário
-  document.getElementById('form-criar-timeline').dataset.leadId = leadId;
-  
-  // Mostra o modal
-  document.getElementById('modal-timeline').classList.remove('hidden');
-};
-
-// Função para fechar o modal
-window.fecharModalTimeline = function() {
-  document.getElementById('modal-timeline').classList.add('hidden');
-};
-
-// Configura o submit do formulário
-document.getElementById('form-criar-timeline').addEventListener('submit', function(e) {
+// Configurar submit do formulário de timeline
+document.getElementById('form-criar-timeline')?.addEventListener('submit', function(e) {
   e.preventDefault();
   
   const leadId = this.dataset.leadId;
@@ -359,7 +268,7 @@ document.getElementById('form-criar-timeline').addEventListener('submit', functi
     return;
   }
 
-  // Cria/atualiza a timeline
+  // Criar/atualizar timeline
   lead.timeline = {
     etapaAtual: 'documentacao',
     criadoEm: new Date().toISOString(),
@@ -376,13 +285,32 @@ document.getElementById('form-criar-timeline').addEventListener('submit', functi
     documentos: []
   };
 
-  // Atualiza dados principais do lead
+  // Atualizar dados principais do lead
   lead.cpf = document.getElementById('timeline-cpf').value;
   
   salvarDados();
-  fecharModalTimeline();
+  document.getElementById('modal-timeline').classList.add('hidden');
   
-  // Redireciona para a página da timeline
+  // Redirecionar para a página da timeline
   sessionStorage.setItem('leadTimelineAtual', leadId);
-  window.location.href = 'timelines.html';
+  window.location.href = 'timeline.html';
 });
+
+// Fechar Modal
+window.fecharModalTimeline = function() {
+  document.getElementById('modal-timeline').classList.add('hidden');
+};
+
+// =============================================
+// FUNCIONALIDADES EXTRAS
+// =============================================
+function exportarDados() {
+  const dataStr = JSON.stringify(dados, null, 2);
+  const blob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'dados_clientes.json';
+  a.click();
+}
