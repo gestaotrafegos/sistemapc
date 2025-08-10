@@ -14,29 +14,28 @@
     </header>
 
     <div class="grid-links">
-      <!-- Cartões de navegação -->
-      <a href="clientes.html" class="link-card">
+      <a href="clientes.html" class="link-card" aria-label="Gerenciamento de Clientes">
         <div class="card">
           <h2>Clientes</h2>
           <p>Gerencie seus clientes e leads</p>
         </div>
       </a>
 
-      <a href="imoveis.html" class="link-card">
+      <a href="imoveis.html" class="link-card" aria-label="Controle de Imóveis">
         <div class="card">
           <h2>Imóveis</h2>
           <p>Controle seu portfólio</p>
         </div>
       </a>
 
-      <a href="contratos.html" class="link-card">
+      <a href="contratos.html" class="link-card" aria-label="Administração de Contratos">
         <div class="card">
           <h2>Contratos</h2>
           <p>Administre contratos</p>
         </div>
       </a>
 
-      <a href="timeline.html" class="link-card">
+      <a href="timeline.html" class="link-card" aria-label="Linha do Tempo de Atividades">
         <div class="card">
           <h2>Timeline</h2>
           <p>Acompanhe atividades</p>
@@ -45,40 +44,22 @@
     </div>
   </div>
 
-  <script src="main.js"></script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js" defer></script>
+  <script src="main.js" defer></script>
 
-   <!-- Firebase v9 (compatível com GitHub Pages) -->
-<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
-<script>
-  // Configuração do Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyByV8aco5IxsMigpiGTXUq9Esk-wNn8t2c",
-    authDomain: "sistemapc-c6b84.firebaseapp.com",
-    databaseURL: "https://sistemapc-c6b84-default-rtdb.firebaseio.com",
-    projectId: "sistemapc-c6b84",
-    storageBucket: "sistemapc-c6b84.firebasestorage.app",
-    messagingSenderId: "618784573767",
-    appId: "1:618784573767:web:3f19824230e0db80b16462",
-    measurementId: "G-5C2R08BEDC"
-  };
-
-  // Inicialize o Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-  const database = firebase.database();
-
-  // Teste de conexão
-  database.ref('teste').set({
-    mensagem: "Conexão estabelecida!",
-    data: new Date().toISOString()
-  })
-  .then(() => console.log("Dados salvos com sucesso!"))
-  .catch((error) => console.error("Erro:", error));
-</script>
+  <script>
+    // Configuração mínima no HTML
+    const firebaseConfig = {
+      apiKey: "AIzaSyByV8aco5IxsMigpiGTXUq9Esk-wNn8t2c",
+      authDomain: "sistemapc-c6b84.firebaseapp.com",
+      databaseURL: "https://sistemapc-c6b84-default-rtdb.firebaseio.com",
+      projectId: "sistemapc-c6b84",
+      storageBucket: "sistemapc-c6b84.firebasestorage.app",
+      messagingSenderId: "618784573767",
+      appId: "1:618784573767:web:3f19824230e0db80b16462"
+    };
+  </script>
 </body>
 </html>
-
-
-
-
-
