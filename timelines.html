@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Timelines</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="pagina-secundaria">
+  <div class="container">
+    <header>
+      <h1>Timelines de Financiamento</h1>
+      <button onclick="window.history.back()" class="btn btn-voltar">← Voltar</button>
+    </header>
+
+    <div class="search-container">
+      <input type="text" id="pesquisa-timeline" placeholder="Pesquisar clientes...">
+      <button id="btn-pesquisar-timeline" class="btn btn-primary">Buscar</button>
+    </div>
+
+    <div class="timeline-list-container">
+      <table id="tabela-timelines">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Etapa</th>
+            <th>Última Atualização</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Preenchido via JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="timelines-list.js"></script>
+</body>
+</html>
