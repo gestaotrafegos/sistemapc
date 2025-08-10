@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalhes da Timeline</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="pagina-secundaria">
+  <div class="container">
+    <header>
+      <h1>Detalhes da Timeline</h1>
+      <button onclick="window.history.back()" class="btn btn-voltar">← Voltar</button>
+    </header>
+
+    <div class="timeline-detail-container">
+      <div class="client-info-card">
+        <h2 id="nome-cliente-timeline"></h2>
+        <div class="info-grid">
+          <div><strong>CPF:</strong> <span id="cliente-cpf"></span></div>
+          <div><strong>Telefone:</strong> <span id="cliente-telefone"></span></div>
+          <div><strong>E-mail:</strong> <span id="cliente-email"></span></div>
+          <div><strong>Interesse:</strong> <span id="cliente-interesse"></span></div>
+        </div>
+      </div>
+
+      <div class="timeline-flow-container">
+        <h3>Progresso do Financiamento</h3>
+        <div class="timeline-flow-steps">
+          <!-- Etapas serão preenchidas via JS -->
+        </div>
+        <button id="btn-gestao-documentos" class="btn btn-primary">Gerenciar Documentos</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="timeline-details.js"></script>
+</body>
+</html>
