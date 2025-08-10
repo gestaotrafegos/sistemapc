@@ -219,7 +219,7 @@ window.criarTimeline = function(leadId) {
   }
 
   sessionStorage.setItem('leadTimelineAtual', leadId);
-  window.location.href = 'timeline.html';
+  window.location.href = 'timelines.html';
 };
 
 // =============================================
