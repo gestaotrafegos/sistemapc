@@ -14,6 +14,13 @@
       <button onclick="window.history.back()" class="btn btn-voltar">← Voltar</button>
     </header>
 
+    <!-- Barra de Pesquisa -->
+    <div class="search-container">
+      <input type="text" id="pesquisa-cliente" placeholder="Pesquisar clientes..." class="form-row input">
+      <button id="btn-pesquisar" class="btn btn-primary">Buscar</button>
+      <button id="btn-limpar" class="btn btn-voltar">Limpar</button>
+    </div>
+
     <!-- Botão para mostrar/ocultar cadastro -->
     <button id="toggle-cadastro" class="btn btn-primary">+ Novo Cliente</button>
 
@@ -22,18 +29,29 @@
       <h2>Cadastrar Novo Cliente</h2>
       <form id="cadastro-cliente">
         <div class="form-row">
-          <input type="text" placeholder="Nome" required>
-          <input type="email" placeholder="E-mail" required>
+          <input type="text" id="nome-cadastro" placeholder="Nome completo" required>
+          <input type="email" id="email-cadastro" placeholder="E-mail" required>
         </div>
         <div class="form-row">
-          <input type="tel" placeholder="Telefone">
-          <select required>
+          <input type="tel" id="telefone-cadastro" placeholder="Telefone (com DDD)">
+          <input type="text" id="cpf-cadastro" placeholder="CPF">
+        </div>
+        <div class="form-row">
+          <select id="interesse-cadastro" required>
             <option value="">Tipo de Interesse</option>
             <option value="Casa">Casa</option>
             <option value="Apartamento">Apartamento</option>
+            <option value="Terreno">Terreno</option>
+            <option value="Comercial">Comercial</option>
+          </select>
+          <select id="corretor-cadastro" required>
+            <option value="">Corretor Responsável</option>
           </select>
         </div>
-        <button type="submit" class="btn btn-primary">Salvar</button>
+        <div class="form-buttons">
+          <button type="submit" class="btn btn-primary">Salvar</button>
+          <button type="button" id="cancelar-cadastro" class="btn btn-voltar">Cancelar</button>
+        </div>
       </form>
     </div>
 
@@ -44,9 +62,10 @@
         <thead>
           <tr>
             <th>Nome</th>
-            <th>E-mail</th>
             <th>Telefone</th>
             <th>Interesse</th>
+            <th>Corretor</th>
+            <th>Último Contato</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -60,26 +79,39 @@
     <div id="form-edicao" class="hidden">
       <h2>Editar Cliente</h2>
       <form id="edicao-cliente">
+        <input type="hidden" id="id-edicao">
         <div class="form-row">
-          <input type="text" placeholder="Nome" required>
-          <input type="email" placeholder="E-mail" required>
-          <input type="tel" placeholder="Telefone">
+          <input type="text" id="nome-edicao" placeholder="Nome" required>
+          <input type="email" id="email-edicao" placeholder="E-mail" required>
         </div>
         <div class="form-row">
-          <select required>
-            <option value="Casa">Interessado em Casa</option>
-            <option value="Apartamento">Interessado em Apartamento</option>
+          <input type="tel" id="telefone-edicao" placeholder="Telefone">
+          <input type="text" id="cpf-edicao" placeholder="CPF">
+        </div>
+        <div class="form-row">
+          <select id="interesse-edicao" required>
+            <option value="Casa">Casa</option>
+            <option value="Apartamento">Apartamento</option>
+            <option value="Terreno">Terreno</option>
+            <option value="Comercial">Comercial</option>
           </select>
-          <input type="date" placeholder="Último contato">
+          <select id="corretor-edicao" required>
+            <!-- Preenchido via JS -->
+          </select>
+        </div>
+        <div class="form-row">
+          <input type="date" id="ultimo-contato-edicao" placeholder="Último contato">
+          <input type="text" id="status-edicao" placeholder="Status (quente/morno/frio)">
         </div>
         <div class="form-buttons">
-          <button type="button" class="btn btn-atendimento">📞 Registrar Atendimento</button>
+          <button type="button" id="btn-atendimento" class="btn btn-atendimento">📞 Registrar Atendimento</button>
           <button type="submit" class="btn btn-salvar">💾 Salvar Alterações</button>
+          <button type="button" id="cancelar-edicao" class="btn btn-voltar">Cancelar</button>
         </div>
       </form>
     </div>
   </div>
 
-  <script src="clientes.js">
+  <script src="clientes.js"></script>
 </body>
 </html>
