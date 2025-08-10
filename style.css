@@ -246,6 +246,40 @@ textarea {
   border-radius: 4px;
   resize: vertical;
 }
+/* Estilos para a barra de pesquisa */
+.search-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  gap: 15px;
+}
+
+.search-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-grow: 1;
+}
+
+#pesquisa-cliente {
+  flex-grow: 1;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-width: 300px;
+}
+
+.btn-export {
+  background-color: #27ae60;
+  color: white;
+  white-space: nowrap;
+}
+
+.btn-export:hover {
+  background-color: #219653;
+}
 
 
 
