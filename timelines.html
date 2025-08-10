@@ -3,38 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lista de Timelines</title>
+  <title>Timeline de Financiamento</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="pagina-secundaria">
   <div class="container">
     <header>
-      <h1>Timelines de Financiamento</h1>
+      <h1>Timeline de Financiamento</h1>
       <button onclick="window.history.back()" class="btn btn-voltar">← Voltar</button>
     </header>
 
-    <div class="search-container">
-      <input type="text" id="pesquisa-timeline" placeholder="Pesquisar clientes...">
-      <button id="btn-pesquisar-timeline" class="btn btn-primary">Buscar</button>
-    </div>
+    <div id="timeline-container">
+      <div class="timeline-header">
+        <h2 id="timeline-cliente-nome"></h2>
+        <div class="timeline-status">
+          Status: <span id="timeline-status" class="status-badge"></span>
+        </div>
+      </div>
 
-    <div class="timeline-list-container">
-      <table id="tabela-timelines">
-        <thead>
-          <tr>
-            <th>Cliente</th>
-            <th>Etapa</th>
-            <th>Última Atualização</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Preenchido via JavaScript -->
-        </tbody>
-      </table>
+      <div class="timeline-flow">
+        <!-- Etapas serão preenchidas via JS -->
+      </div>
+
+      <div class="timeline-content">
+        <div class="document-section">
+          <h3>Anexar Documentos</h3>
+          <input type="file" id="document-upload" multiple>
+          <button id="btn-upload" class="btn btn-primary">Enviar Documentos</button>
+          <div id="document-list"></div>
+        </div>
+
+        <div class="actions-section">
+          <button id="btn-avancar-etapa" class="btn btn-primary">Avançar Etapa</button>
+          <button id="btn-enviar-email" class="btn btn-secondary">Enviar para Análise</button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <script src="timelines-list.js"></script>
+  <script src="timeline.js"></script>
 </body>
 </html>
