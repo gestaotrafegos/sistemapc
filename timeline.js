@@ -1,126 +1,118 @@
 // timeline.js
 document.addEventListener('DOMContentLoaded', function() {
-  if (!window.location.pathname.includes('timeline.html')) return;
-
   const leadId = sessionStorage.getItem('leadTimelineAtual');
   if (!leadId) {
-    alert('Nenhum cliente selecionado para criar timeline');
+    alert('Nenhum cliente selecionado');
     window.location.href = 'clientes.html';
     return;
   }
 
   const dados = JSON.parse(localStorage.getItem('dadosImobiliaria'));
   const lead = dados.leads[leadId];
-  if (!lead) {
-    alert('Cliente não encontrado');
+  
+  if (!lead || !lead.timeline) {
+    alert('Timeline não encontrada');
     window.location.href = 'clientes.html';
     return;
   }
 
-  // Exibir dados básicos
-  document.getElementById('nome-cliente-timeline').textContent = lead.nome;
-  document.getElementById('telefone-cliente').textContent = lead.telefone || 'Não informado';
-  document.getElementById('email-cliente').textContent = lead.email || 'Não informado';
-  document.getElementById('interesse-cliente').textContent = lead.interesse || 'Não informado';
-  
-  const corretor = dados.corretores[lead.corretor_id];
-  document.getElementById('corretor-cliente').textContent = corretor ? corretor.nome : 'Não atribuído';
+  // Exibe informações básicas
+  document.getElementById('timeline-cliente-nome').textContent = lead.nome;
+  document.getElementById('timeline-status').textContent = formatarEtapa(lead.timeline.etapaAtual);
 
-  // Configurar formulário
-  const formTimeline = document.getElementById('formulario-timeline');
-  if (lead.timeline) {
-    preencherFormularioTimeline(lead.timeline);
-  }
+  // Configura o fluxo visual
+  renderizarEtapas(lead.timeline.etapaAtual);
 
-  formTimeline.addEventListener('submit', function(e) {
-    e.preventDefault();
-    salvarTimeline(leadId);
+  // Configura upload de documentos
+  document.getElementById('btn-upload').addEventListener('click', function() {
+    const files = document.getElementById('document-upload').files;
+    if (files.length === 0) {
+      alert('Selecione pelo menos um documento');
+      return;
+    }
+
+    if (!lead.timeline.documentos) {
+      lead.timeline.documentos = [];
+    }
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      lead.timeline.documentos.push({
+        nome: file.name,
+        tipo: file.type,
+        tamanho: file.size,
+        data: new Date().toISOString()
+      });
+    }
+
+    salvarDados();
+    alert('Documentos enviados com sucesso!');
+    atualizarListaDocumentos();
   });
 
-  document.getElementById('detalhe-cliente').classList.remove('hidden');
+  // Função auxiliar para formatar etapa
+  function formatarEtapa(etapa) {
+    const etapas = {
+      'documentacao': 'Em Documentação',
+      'analise': 'Em Análise',
+      'aprovacao': 'Aprovado',
+      'finalizado': 'Finalizado'
+    };
+    return etapas[etapa] || etapa;
+  }
+
+  // Função para renderizar as etapas
+  function renderizarEtapas(etapaAtual) {
+    const etapas = [
+      { id: 'documentacao', nome: 'Documentação' },
+      { id: 'analise', nome: 'Análise' },
+      { id: 'aprovacao', nome: 'Aprovação' },
+      { id: 'finalizado', nome: 'Finalizado' }
+    ];
+
+    const container = document.querySelector('.timeline-flow');
+    container.innerHTML = '';
+
+    etapas.forEach(etapa => {
+      const etapaEl = document.createElement('div');
+      etapaEl.className = `etapa ${etapa.id === etapaAtual ? 'ativa' : ''} ${etapa.id < etapaAtual ? 'completa' : ''}`;
+      etapaEl.innerHTML = `
+        <div class="etapa-marcador"></div>
+        <div class="etapa-texto">${etapa.nome}</div>
+      `;
+      container.appendChild(etapaEl);
+    });
+  }
+
+  // Função para atualizar lista de documentos
+  function atualizarListaDocumentos() {
+    const container = document.getElementById('document-list');
+    container.innerHTML = '';
+    
+    if (lead.timeline.documentos && lead.timeline.documentos.length > 0) {
+      const list = document.createElement('ul');
+      lead.timeline.documentos.forEach(doc => {
+        const item = document.createElement('li');
+        item.textContent = `${doc.nome} (${formatarTamanho(doc.tamanho)}) - ${formatarData(doc.data)}`;
+        list.appendChild(item);
+      });
+      container.appendChild(list);
+    } else {
+      container.textContent = 'Nenhum documento enviado ainda.';
+    }
+  }
+
+  // Funções auxiliares
+  function formatarData(dataString) {
+    return new Date(dataString).toLocaleDateString('pt-BR');
+  }
+
+  function formatarTamanho(bytes) {
+    if (bytes < 1024) return bytes + ' bytes';
+    else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+    else return (bytes / 1048576).toFixed(1) + ' MB';
+  }
+
+  // Inicializa a lista de documentos
+  atualizarListaDocumentos();
 });
-
-function preencherFormularioTimeline(timelineData) {
-  // Cliente 1
-  document.getElementById('cliente1-nome').value = timelineData.cliente1.nome || '';
-  document.getElementById('cliente1-telefone').value = timelineData.cliente1.telefone || '';
-  document.getElementById('cliente1-cpf').value = timelineData.cliente1.cpf || '';
-  document.getElementById('cliente1-rg').value = timelineData.cliente1.rg || '';
-  document.getElementById('cliente1-nascimento').value = timelineData.cliente1.nascimento || '';
-  document.getElementById('cliente1-cep').value = timelineData.cliente1.cep || '';
-  document.getElementById('cliente1-rua').value = timelineData.cliente1.rua || '';
-  document.getElementById('cliente1-bairro').value = timelineData.cliente1.bairro || '';
-  document.getElementById('cliente1-complemento').value = timelineData.cliente1.complemento || '';
-
-  // Cliente 2
-  if (timelineData.cliente2) {
-    document.getElementById('cliente2-nome').value = timelineData.cliente2.nome || '';
-    document.getElementById('cliente2-telefone').value = timelineData.cliente2.telefone || '';
-    document.getElementById('cliente2-cpf').value = timelineData.cliente2.cpf || '';
-    document.getElementById('cliente2-rg').value = timelineData.cliente2.rg || '';
-    document.getElementById('cliente2-nascimento').value = timelineData.cliente2.nascimento || '';
-  }
-
-  // Dados de renda
-  document.getElementById('renda-bruta').value = timelineData.renda.bruta || '';
-  document.getElementById('fgts-tempo').value = timelineData.renda.fgts || '';
-  document.getElementById('valor-avaliacao').value = timelineData.renda.valorAvaliacao || '';
-}
-
-function salvarTimeline(leadId) {
-  const dados = JSON.parse(localStorage.getItem('dadosImobiliaria'));
-  const lead = dados.leads[leadId];
-
-  const timelineData = {
-    cliente1: {
-      nome: document.getElementById('cliente1-nome').value,
-      telefone: document.getElementById('cliente1-telefone').value,
-      cpf: document.getElementById('cliente1-cpf').value,
-      rg: document.getElementById('cliente1-rg').value,
-      nascimento: document.getElementById('cliente1-nascimento').value,
-      cep: document.getElementById('cliente1-cep').value,
-      rua: document.getElementById('cliente1-rua').value,
-      bairro: document.getElementById('cliente1-bairro').value,
-      complemento: document.getElementById('cliente1-complemento').value
-    },
-    cliente2: {
-      nome: document.getElementById('cliente2-nome').value,
-      telefone: document.getElementById('cliente2-telefone').value,
-      cpf: document.getElementById('cliente2-cpf').value,
-      rg: document.getElementById('cliente2-rg').value,
-      nascimento: document.getElementById('cliente2-nascimento').value
-    },
-    renda: {
-      bruta: document.getElementById('renda-bruta').value,
-      fgts: document.getElementById('fgts-tempo').value,
-      valorAvaliacao: document.getElementById('valor-avaliacao').value
-    },
-    etapaAtual: 'documentacao',
-    criadoEm: new Date().toISOString()
-  };
-
-  // Validação
-  if (!validarTimeline(timelineData)) {
-    return;
-  }
-
-  lead.timeline = timelineData;
-  localStorage.setItem('dadosImobiliaria', JSON.stringify(dados));
-  alert('Timeline salva com sucesso!');
-}
-
-function validarTimeline(timelineData) {
-  const cliente1 = timelineData.cliente1;
-  if (!cliente1.nome || !cliente1.telefone || !cliente1.cpf || !cliente1.rg || 
-      !cliente1.nascimento || !cliente1.cep || !cliente1.rua || !cliente1.bairro) {
-    alert('Por favor, preencha todos os campos obrigatórios do Cliente 1');
-    return false;
-  }
-
-  if (!timelineData.renda.bruta || !timelineData.renda.fgts || !timelineData.renda.valorAvaliacao) {
-    alert('Por favor, preencha todos os campos de renda');
-    return false;
-  }
-
-  return true;
-}
