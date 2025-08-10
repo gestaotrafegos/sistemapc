@@ -1,4 +1,4 @@
-/* style.css - Updated Professional Version */
+/* style.css - Professional Version */
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
 
 /* ===== GLOBAL STYLES ===== */
@@ -8,7 +8,7 @@ body {
   padding: 0;
   color: #333;
   line-height: 1.6;
-  background-color: #f5f5f5; /* Light gray background for all pages */
+  background-color: #f5f5f5;
 }
 
 /* ===== MAIN CONTAINER ===== */
@@ -20,11 +20,14 @@ body {
 
 /* ===== HEADER STYLES ===== */
 header {
-  background-color: #4CAF50; /* Brand green */
+  background-color: #4CAF50;
   color: white;
   padding: 20px;
   border-radius: 5px;
   margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 header h1 {
@@ -46,7 +49,6 @@ header h1 {
 .btn-voltar {
   background: #f0f0f0;
   color: #333;
-  margin-top: 20px;
 }
 
 .btn-voltar:hover {
@@ -60,6 +62,38 @@ header h1 {
 
 .btn-primary:hover {
   background-color: #3e8e41;
+}
+
+.btn-editar {
+  background: #FFC107;
+  color: #000;
+  padding: 5px 10px;
+  margin-right: 5px;
+}
+
+.btn-atendimento {
+  background: #2196F3;
+  color: white;
+  padding: 5px 10px;
+}
+
+.btn-timeline {
+  background-color: #9b59b6;
+  color: white;
+}
+
+.btn-timeline:hover {
+  background-color: #8e44ad;
+}
+
+.btn-export {
+  background-color: #27ae60;
+  color: white;
+  white-space: nowrap;
+}
+
+.btn-export:hover {
+  background-color: #219653;
 }
 
 /* ===== FORM STYLES ===== */
@@ -80,8 +114,41 @@ header h1 {
   font-family: 'Lato', sans-serif;
 }
 
+textarea {
+  font-family: 'Lato', sans-serif;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: vertical;
+}
+
 .hidden {
   display: none;
+}
+
+/* ===== SEARCH BAR STYLES ===== */
+.search-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  gap: 15px;
+}
+
+.search-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-grow: 1;
+}
+
+#pesquisa-cliente {
+  flex-grow: 1;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-width: 300px;
 }
 
 /* ===== TABLE STYLES ===== */
@@ -109,42 +176,43 @@ header h1 {
   background-color: #f5f5f5;
 }
 
-/* ===== ACTION BUTTONS ===== */
-.btn-editar {
-  background: #FFC107;
-  color: #000;
-  padding: 5px 10px;
-  margin-right: 5px;
+/* ===== OBSERVATIONS STYLES ===== */
+#lista-observacoes {
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  padding: 10px;
 }
 
-.btn-atendimento {
-  background: #2196F3;
-  color: white;
-  padding: 5px 10px;
+.observacao-item {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 5px;
 }
 
-/* ===== SECONDARY PAGE STYLES ===== */
-.pagina-secundaria .container {
-  background-color: white;
-  padding: 30px;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  border-top: 5px solid #4CAF50; /* Brand accent */
+.observacao-item:last-child {
+  border-bottom: none;
 }
 
-/* ===== RESPONSIVE ADJUSTMENTS ===== */
-@media (max-width: 768px) {
-  .form-row {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .form-row input,
-  .form-row select {
-    width: 100%;
-  }
+.observacao-titulo {
+  font-weight: bold;
+  color: #2c3e50;
 }
-/* Estilos específicos para index.html */
+
+.observacao-data {
+  font-size: 0.8em;
+  color: #7f8c8d;
+}
+
+.observacao-texto {
+  margin-top: 5px;
+}
+
+/* ===== PAGE SPECIFIC STYLES ===== */
+/* Página principal */
 .grid-links {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -179,108 +247,54 @@ header h1 {
 .card p {
   color: #666;
 }
-/* Adicione isso no final do seu style.css */
 
-/* Ajustes para a barra de pesquisa */
-.search-container {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 25px; /* Aumentei o espaçamento */
-  align-items: center;
+/* Páginas secundárias */
+.pagina-secundaria .container {
+  background-color: white;
+  padding: 30px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border-top: 5px solid #4CAF50;
+  margin-top: 20px;
+  margin-bottom: 30px;
 }
 
-#pesquisa-cliente {
-  flex-grow: 1; /* Faz a barra crescer */
-  padding: 12px 15px; /* Mais espaçamento interno */
-  font-size: 16px; /* Texto maior */
-  min-width: 300px; /* Largura mínima maior */
-}
-
-/* Espaçamento entre a barra e o botão de cadastro */
-#toggle-cadastro {
+.pagina-secundaria .form-row {
   margin-bottom: 20px;
 }
-/* Adicione isso no seu arquivo CSS */
-.btn-timeline {
-  background-color: #9b59b6 !important;
-  color: white !important;
-}
 
-.btn-timeline:hover {
-  background-color: #8e44ad !important;
-}
-/* Estilos para o sistema de observações */
-#lista-observacoes {
-  background-color: #f9f9f9;
-  border-radius: 4px;
-}
-
-.observacao-item {
-  padding: 8px;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 5px;
-}
-
-.observacao-item:last-child {
-  border-bottom: none;
-}
-
-.observacao-titulo {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-.observacao-data {
-  font-size: 0.8em;
-  color: #7f8c8d;
-}
-
-.observacao-texto {
-  margin-top: 5px;
-}
-
-textarea {
-  font-family: 'Lato', sans-serif;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  resize: vertical;
-}
-/* Estilos para a barra de pesquisa */
-.search-container {
+.pagina-secundaria .form-buttons {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-  gap: 15px;
-}
-
-.search-group {
-  display: flex;
-  align-items: center;
   gap: 10px;
-  flex-grow: 1;
+  margin-top: 25px;
 }
 
-#pesquisa-cliente {
-  flex-grow: 1;
-  padding: 10px 15px;
-  font-size: 16px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  min-width: 300px;
+.pagina-secundaria #toggle-cadastro {
+  margin-bottom: 25px;
 }
 
-.btn-export {
-  background-color: #27ae60;
-  color: white;
-  white-space: nowrap;
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .form-row input,
+  .form-row select {
+    width: 100%;
+  }
+
+  .search-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-group {
+    margin-bottom: 10px;
+  }
+
+  .pagina-secundaria .form-buttons {
+    flex-direction: column;
+  }
 }
-
-.btn-export:hover {
-  background-color: #219653;
-}
-
-
-
-
