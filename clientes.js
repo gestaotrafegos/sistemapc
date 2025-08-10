@@ -52,6 +52,11 @@ function calcularDiasSemContato(data) {
   return diffDays === 0 ? "Hoje" : `${diffDays} dias`;
 }
 
+// Função para formatar valores monetários
+function formatarMoeda(valor) {
+  return parseFloat(valor.replace(/[^\d,]/g, '').replace(',', '.'));
+}
+
 // =============================================
 // FUNÇÕES PRINCIPAIS (PÁGINA CLIENTES)
 // =============================================
@@ -289,14 +294,16 @@ window.criarTimeline = function(leadId) {
   
   // Preencher dados iniciais
   document.getElementById('modal-cliente-nome').textContent = lead.nome;
-  if (lead.cpf) document.getElementById('timeline-cpf').value = lead.cpf;
+  if (lead.cpf) document.getElementById('cliente1-cpf').value = lead.cpf;
+  if (lead.nome) document.getElementById('cliente1-nome').value = lead.nome;
+  if (lead.telefone) document.getElementById('cliente1-telefone').value = lead.telefone;
   
   // Armazenar lead ID no formulário
   form.dataset.leadId = leadId;
   
   // Mostrar modal
   modal.classList.remove('hidden');
-  document.getElementById('timeline-cpf').focus();
+  document.getElementById('cliente1-nome').focus();
 };
 
 // Configurar submit do formulário de timeline
@@ -308,9 +315,9 @@ document.getElementById('form-criar-timeline').addEventListener('submit', functi
   
   // Validação dos campos obrigatórios
   const camposObrigatorios = [
-    'timeline-cpf', 'timeline-rg', 
-    'timeline-nascimento', 'timeline-cep',
-    'timeline-renda', 'timeline-fgts'
+    'cliente1-nome', 'cliente1-telefone', 'cliente1-cpf', 'cliente1-rg',
+    'cliente1-nascimento', 'cliente1-cep', 'cliente1-rua', 'cliente1-numero',
+    'cliente1-bairro', 'renda-bruta', 'fgts-tempo', 'valor-avaliacao'
   ];
   
   let isValid = true;
@@ -333,28 +340,42 @@ document.getElementById('form-criar-timeline').addEventListener('submit', functi
   lead.timeline = {
     etapaAtual: 'documentacao',
     criadoEm: new Date().toISOString(),
-    dadosCliente: {
-      cpf: document.getElementById('timeline-cpf').value,
-      rg: document.getElementById('timeline-rg').value,
-      nascimento: document.getElementById('timeline-nascimento').value,
-      cep: document.getElementById('timeline-cep').value
+    cliente1: {
+      nome: document.getElementById('cliente1-nome').value,
+      telefone: document.getElementById('cliente1-telefone').value,
+      cpf: document.getElementById('cliente1-cpf').value,
+      rg: document.getElementById('cliente1-rg').value,
+      nascimento: document.getElementById('cliente1-nascimento').value,
+      endereco: {
+        cep: document.getElementById('cliente1-cep').value,
+        rua: document.getElementById('cliente1-rua').value,
+        numero: document.getElementById('cliente1-numero').value,
+        bairro: document.getElementById('cliente1-bairro').value,
+        complemento: document.getElementById('cliente1-complemento').value
+      }
+    },
+    cliente2: {
+      nome: document.getElementById('cliente2-nome').value,
+      telefone: document.getElementById('cliente2-telefone').value,
+      cpf: document.getElementById('cliente2-cpf').value
     },
     renda: {
-      valor: document.getElementById('timeline-renda').value,
-      fgts: document.getElementById('timeline-fgts').value
+      bruta: formatarMoeda(document.getElementById('renda-bruta').value),
+      fgtsTempo: document.getElementById('fgts-tempo').value,
+      valorAvaliacao: formatarMoeda(document.getElementById('valor-avaliacao').value)
     },
     documentos: []
   };
 
   // Atualizar dados principais do lead
-  lead.cpf = document.getElementById('timeline-cpf').value;
+  lead.cpf = document.getElementById('cliente1-cpf').value;
   
   salvarDados();
   document.getElementById('modal-timeline').classList.add('hidden');
   
   // Redirecionar para a página da timeline
   sessionStorage.setItem('leadTimelineAtual', leadId);
-  window.location.href = 'timeline.html';
+  window.location.href = 'timelines.html';
 });
 
 // Fechar Modal
@@ -375,3 +396,19 @@ function exportarDados() {
   a.download = 'dados_clientes.json';
   a.click();
 }
+
+// Configurar máscara para valores monetários
+document.addEventListener('DOMContentLoaded', function() {
+  const moneyInputs = document.querySelectorAll('.money-input');
+  moneyInputs.forEach(input => {
+    input.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      value = (value / 100).toLocaleString('pt-BR', {
+        style: 'decimal',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+      e.target.value = value;
+    });
+  });
+});
