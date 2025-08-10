@@ -103,6 +103,17 @@
           <input type="date" id="ultimo-contato-edicao" placeholder="Último contato">
           <input type="text" id="status-edicao" placeholder="Status (quente/morno/frio)">
         </div>
+        <div class="form-row">
+  <div style="width: 100%;">
+    <h3>Observações/Atendimentos</h3>
+    <div id="lista-observacoes" style="max-height: 150px; overflow-y: auto; margin-bottom: 10px; border: 1px solid #ddd; padding: 10px;"></div>
+    <div class="form-row">
+      <input type="text" id="nova-observacao-titulo" placeholder="Título" style="flex: 1;">
+      <textarea id="nova-observacao-texto" placeholder="Registre suas observações..." style="flex: 3; min-height: 80px;"></textarea>
+    </div>
+    <button type="button" id="btn-adicionar-observacao" class="btn" style="background-color: #3498db; color: white;">➕ Adicionar Observação</button>
+  </div>
+</div>
         <div class="form-buttons">
           <button type="button" id="btn-atendimento" class="btn btn-atendimento">📞 Registrar Atendimento</button>
           <button type="submit" class="btn btn-salvar">💾 Salvar Alterações</button>
