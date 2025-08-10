@@ -179,4 +179,26 @@ header h1 {
 .card p {
   color: #666;
 }
+/* Adicione isso no final do seu style.css */
+
+/* Ajustes para a barra de pesquisa */
+.search-container {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px; /* Aumentei o espaçamento */
+  align-items: center;
+}
+
+#pesquisa-cliente {
+  flex-grow: 1; /* Faz a barra crescer */
+  padding: 12px 15px; /* Mais espaçamento interno */
+  font-size: 16px; /* Texto maior */
+  min-width: 300px; /* Largura mínima maior */
+}
+
+/* Espaçamento entre a barra e o botão de cadastro */
+#toggle-cadastro {
+  margin-bottom: 20px;
+}
+
 
