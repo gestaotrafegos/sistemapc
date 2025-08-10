@@ -184,6 +184,15 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('cancelar-edicao').addEventListener('click', () => {
     formEdicao.classList.add('hidden');
   });
+  document.getElementById('btn-timeline').addEventListener('click', () => {
+  const leadId = document.getElementById('id-edicao').value;
+  if (leadId) {
+    // Aqui você pode chamar a função que criará a timeline
+    criarTimeline(leadId);
+  } else {
+    alert('Selecione um cliente primeiro');
+  }
+});
 
   // 5. Salvar Edição
   formEdicaoCliente.addEventListener('submit', (e) => {
@@ -257,3 +266,8 @@ function exportarDados() {
   a.download = 'dados_clientes.json';
   a.click();
 }
+// Adicione esta função em algum lugar do seu arquivo JS
+function criarTimeline(leadId) {
+  const lead = dados.leads[leadId];
+  if (!lead) return;
+   alert(`Criando timeline para: ${lead.nome}\nID: ${leadId}`);
