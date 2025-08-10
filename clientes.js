@@ -303,3 +303,86 @@ function exportarDados() {
   a.download = 'dados_clientes.json';
   a.click();
 }
+// Adicione estas funções globais:
+
+// Função para abrir o modal de timeline
+window.criarTimeline = function(leadId) {
+  const lead = dados.leads[leadId];
+  if (!lead) {
+    alert('Cliente não encontrado!');
+    return;
+  }
+
+  // Preenche os dados iniciais
+  document.getElementById('modal-cliente-nome').textContent = lead.nome;
+  if (lead.cpf) document.getElementById('timeline-cpf').value = lead.cpf;
+  
+  // Armazena o ID do lead no formulário
+  document.getElementById('form-criar-timeline').dataset.leadId = leadId;
+  
+  // Mostra o modal
+  document.getElementById('modal-timeline').classList.remove('hidden');
+};
+
+// Função para fechar o modal
+window.fecharModalTimeline = function() {
+  document.getElementById('modal-timeline').classList.add('hidden');
+};
+
+// Configura o submit do formulário
+document.getElementById('form-criar-timeline').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const leadId = this.dataset.leadId;
+  const lead = dados.leads[leadId];
+  
+  // Validação dos campos obrigatórios
+  const camposObrigatorios = [
+    'timeline-cpf', 'timeline-rg', 
+    'timeline-nascimento', 'timeline-cep',
+    'timeline-renda', 'timeline-fgts'
+  ];
+  
+  let isValid = true;
+  camposObrigatorios.forEach(id => {
+    const campo = document.getElementById(id);
+    if (!campo.value) {
+      campo.style.border = '1px solid red';
+      isValid = false;
+    } else {
+      campo.style.border = '';
+    }
+  });
+  
+  if (!isValid) {
+    alert('Por favor, preencha todos os campos obrigatórios!');
+    return;
+  }
+
+  // Cria/atualiza a timeline
+  lead.timeline = {
+    etapaAtual: 'documentacao',
+    criadoEm: new Date().toISOString(),
+    dadosCliente: {
+      cpf: document.getElementById('timeline-cpf').value,
+      rg: document.getElementById('timeline-rg').value,
+      nascimento: document.getElementById('timeline-nascimento').value,
+      cep: document.getElementById('timeline-cep').value
+    },
+    renda: {
+      valor: document.getElementById('timeline-renda').value,
+      fgts: document.getElementById('timeline-fgts').value
+    },
+    documentos: []
+  };
+
+  // Atualiza dados principais do lead
+  lead.cpf = document.getElementById('timeline-cpf').value;
+  
+  salvarDados();
+  fecharModalTimeline();
+  
+  // Redireciona para a página da timeline
+  sessionStorage.setItem('leadTimelineAtual', leadId);
+  window.location.href = 'timelines.html';
+});
