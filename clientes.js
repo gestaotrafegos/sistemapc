@@ -313,33 +313,43 @@ document.getElementById('form-criar-timeline').addEventListener('submit', functi
   const leadId = this.dataset.leadId;
   const lead = dados.leads[leadId];
   
-  // Validação dos campos obrigatórios
+  // Validação melhorada com mensagens específicas
   const camposObrigatorios = [
-    'cliente1-nome', 'cliente1-telefone', 'cliente1-cpf', 'cliente1-rg',
-    'cliente1-nascimento', 'cliente1-cep', 'cliente1-rua', 'cliente1-numero',
-    'cliente1-bairro', 'renda-bruta', 'fgts-tempo', 'valor-avaliacao'
+    {id: 'cliente1-nome', nome: 'Nome do Cliente'},
+    {id: 'cliente1-telefone', nome: 'Telefone'},
+    {id: 'cliente1-cpf', nome: 'CPF'},
+    {id: 'cliente1-rg', nome: 'RG'},
+    {id: 'cliente1-nascimento', nome: 'Data de Nascimento'},
+    {id: 'cliente1-cep', nome: 'CEP'},
+    {id: 'cliente1-rua', nome: 'Rua'},
+    {id: 'cliente1-numero', nome: 'Número'},
+    {id: 'cliente1-bairro', nome: 'Bairro'},
+    {id: 'renda-bruta', nome: 'Renda Bruta'},
+    {id: 'fgts-tempo', nome: 'Tempo de FGTS'},
+    {id: 'valor-avaliacao', nome: 'Valor de Avaliação'}
   ];
   
-  let isValid = true;
-  camposObrigatorios.forEach(id => {
-    const campo = document.getElementById(id);
-    if (!campo.value) {
-      campo.style.border = '1px solid red';
-      isValid = false;
+  const camposFaltantes = [];
+  camposObrigatorios.forEach(campo => {
+    const elemento = document.getElementById(campo.id);
+    if (!elemento.value) {
+      elemento.style.border = '1px solid red';
+      camposFaltantes.push(campo.nome);
     } else {
-      campo.style.border = '';
+      elemento.style.border = '';
     }
   });
   
-  if (!isValid) {
-    alert('Por favor, preencha todos os campos obrigatórios!');
+  if (camposFaltantes.length > 0) {
+    alert(`Por favor, preencha os seguintes campos obrigatórios:\n\n${camposFaltantes.join('\n')}`);
     return;
   }
 
-  // Criar/atualizar timeline
+  // Criar/atualizar timeline com estrutura completa
   lead.timeline = {
-    etapaAtual: 'envio de documentação',
+    etapaAtual: 'documentacao', // Padronizado para usar o mesmo nome em todas as etapas
     criadoEm: new Date().toISOString(),
+    ultimaAtualizacao: new Date().toISOString(),
     cliente1: {
       nome: document.getElementById('cliente1-nome').value,
       telefone: document.getElementById('cliente1-telefone').value,
@@ -355,18 +365,55 @@ document.getElementById('form-criar-timeline').addEventListener('submit', functi
       }
     },
     cliente2: {
-      nome: document.getElementById('cliente2-nome').value,
-      telefone: document.getElementById('cliente2-telefone').value,
-      cpf: document.getElementById('cliente2-cpf').value,
-      nascimento: document.getElementById('cliente2-nascimento').value
+      nome: document.getElementById('cliente2-nome').value || null,
+      telefone: document.getElementById('cliente2-telefone').value || null,
+      cpf: document.getElementById('cliente2-cpf').value || null,
+      nascimento: document.getElementById('cliente2-nascimento').value || null
     },
     renda: {
       bruta: formatarMoeda(document.getElementById('renda-bruta').value),
       fgtsTempo: document.getElementById('fgts-tempo').value,
       valorAvaliacao: formatarMoeda(document.getElementById('valor-avaliacao').value)
     },
-    documentos: []
+    historicoEtapas: [{ // Adicionado histórico
+      de: null,
+      para: 'documentacao',
+      data: new Date().toISOString(),
+      responsavel: 'corretor' // Substituir pelo ID do corretor logado
+    }],
+    documentos: [],
+    emails: []
   };
+
+  // Atualizar dados principais do lead
+  lead.cpf = document.getElementById('cliente1-cpf').value;
+  
+  if (salvarDados()) {
+    document.getElementById('modal-timeline').classList.add('hidden');
+    sessionStorage.setItem('leadTimelineAtual', leadId);
+    window.location.href = 'timeline.html';
+  }
+});
+
+// Função auxiliar para formatar valores monetários
+function formatarMoeda(valor) {
+  // Remove tudo que não é dígito ou vírgula
+  const valorNumerico = parseFloat(valor.replace(/[^\d,]/g, '').replace(',', '.'));
+  return isNaN(valorNumerico) ? 0 : valorNumerico;
+}
+
+// Função de salvar dados melhorada
+function salvarDados() {
+  try {
+    localStorage.setItem('dadosImobiliaria', JSON.stringify(dados));
+    console.log('Dados salvos com sucesso:', dados);
+    return true;
+  } catch (e) {
+    console.error('Erro ao salvar dados:', e);
+    alert('Erro ao salvar os dados. Por favor, tente novamente.');
+    return false;
+  }
+}
 
   // Atualizar dados principais do lead
   lead.cpf = document.getElementById('cliente1-cpf').value;
