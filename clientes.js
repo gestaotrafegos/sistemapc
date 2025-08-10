@@ -391,7 +391,7 @@ document.getElementById('form-criar-timeline').addEventListener('submit', functi
   if (salvarDados()) {
     document.getElementById('modal-timeline').classList.add('hidden');
     sessionStorage.setItem('leadTimelineAtual', leadId);
-    window.location.href = 'timeline.html';
+    window.location.href = 'timelines.html';
   }
 });
 
@@ -414,17 +414,6 @@ function salvarDados() {
     return false;
   }
 }
-
-  // Atualizar dados principais do lead
-  lead.cpf = document.getElementById('cliente1-cpf').value;
-  
-  salvarDados();
-  document.getElementById('modal-timeline').classList.add('hidden');
-  
-  // Redirecionar para a página da timeline
-  sessionStorage.setItem('leadTimelineAtual', leadId);
-  window.location.href = 'timelines.html';
-});
 
 // Fechar Modal
 window.fecharModalTimeline = function() {
