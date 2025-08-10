@@ -200,5 +200,15 @@ header h1 {
 #toggle-cadastro {
   margin-bottom: 20px;
 }
+/* Adicione isso no seu arquivo CSS */
+.btn-timeline {
+  background-color: #9b59b6 !important;
+  color: white !important;
+}
+
+.btn-timeline:hover {
+  background-color: #8e44ad !important;
+}
+
 
 
