@@ -1,104 +1,146 @@
-/* ===== ESTILOS GLOBAIS (aplicados a TODAS as páginas) ===== */
-/* ===== CARREGAMENTO DA FONTE LATO ===== */
+/* style.css - Updated Professional Version */
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
 
-/* ===== ESTILOS GLOBAIS ===== */
+/* ===== GLOBAL STYLES ===== */
 body {
   font-family: 'Lato', sans-serif;
   margin: 0;
   padding: 0;
   color: #333;
   line-height: 1.6;
-  font-weight: 400; /* Peso regular como padrão */
+  background-color: #f5f5f5; /* Light gray background for all pages */
 }
 
-/* ===== HIERARQUIA DE FONTES ===== */
-h1, h2, h3 {
-  font-weight: 700; /* Negrito para títulos */
+/* ===== MAIN CONTAINER ===== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.btn {
-  font-weight: 700; /* Botões em negrito */
+/* ===== HEADER STYLES ===== */
+header {
+  background-color: #4CAF50; /* Brand green */
+  color: white;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
 }
 
-/* ===== PÁGINAS SECUNDÁRIAS ===== */
-body.pagina-secundaria {
-  background: #fff;
-  font-size: 16px; /* Tamanho base confortável */
+header h1 {
+  margin: 0;
+  font-weight: 700;
 }
 
-.container-secundario {
-  /* ... (mantenha o resto do CSS anterior) */
-  font-family: 'Lato', sans-serif; /* Redundância para segurança */
-}
+/* ===== BUTTON STYLES ===== */
 .btn {
   padding: 10px 20px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  font-family: 'Lato', sans-serif;
 }
 
 .btn-voltar {
   background: #f0f0f0;
   color: #333;
+  margin-top: 20px;
 }
 
 .btn-voltar:hover {
   background: #ddd;
 }
 
-/* ===== ESTILO PARA PÁGINAS SECUNDÁRIAS (clientes, imóveis, etc.) ===== */
-body.pagina-secundaria {
-  background: #fff;
-}
-
-.container-secundario {
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 20px;
-  border: 3px solid #4CAF50; /* Borda verde no tom da index */
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-/* ===== ESTILOS ESPECÍFICOS PARA clientes.html ===== */
-/* Tabela */
-#tabela-clientes {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-#tabela-clientes th, 
-#tabela-clientes td {
-  border: 1px solid #ddd;
-  padding: 12px;
-  text-align: left;
-}
-
-#tabela-clientes th {
+.btn-primary {
   background-color: #4CAF50;
   color: white;
 }
 
-/* Formulários */
+.btn-primary:hover {
+  background-color: #3e8e41;
+}
+
+/* ===== FORM STYLES ===== */
 .form-row {
   display: flex;
   gap: 15px;
   margin-bottom: 15px;
+  flex-wrap: wrap;
 }
 
 .form-row input,
 .form-row select {
   flex: 1;
+  min-width: 200px;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  font-family: 'Lato', sans-serif;
 }
 
 .hidden {
   display: none;
+}
+
+/* ===== TABLE STYLES ===== */
+#tabela-clientes {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#tabela-clientes th {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px;
+  text-align: left;
+}
+
+#tabela-clientes td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+#tabela-clientes tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.btn-editar {
+  background: #FFC107;
+  color: #000;
+  padding: 5px 10px;
+  margin-right: 5px;
+}
+
+.btn-atendimento {
+  background: #2196F3;
+  color: white;
+  padding: 5px 10px;
+}
+
+/* ===== SECONDARY PAGE STYLES ===== */
+.pagina-secundaria .container {
+  background-color: white;
+  padding: 30px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border-top: 5px solid #4CAF50; /* Brand accent */
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .form-row input,
+  .form-row select {
+    width: 100%;
+  }
 }
