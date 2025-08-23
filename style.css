@@ -770,4 +770,19 @@ textarea {
 .hidden {
   display: none;
 }
+.btn-principal {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-left: 10px;
+}
+
+.btn-principal:hover {
+    background-color: #2980b9;
+}
 
