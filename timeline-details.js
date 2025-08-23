@@ -1,12 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const leadId = sessionStorage.getItem('timelineSelecionada');
+  // CORREÇÃO: Usar a chave correta que foi definida no timelines.js
+  const leadId = sessionStorage.getItem('leadTimelineAtual');
+  
   if (!leadId) {
     alert('Nenhuma timeline selecionada');
-    window.location.href = 'timelines.html';
+    window.location.href = 'timelines.html'; // Voltar para lista de timelines
     return;
   }
 
-  const dados = JSON.parse(localStorage.getItem('dadosImobiliaria'));
+  const dados = JSON.parse(localStorage.getItem('dadosImobiliaria')) || { leads: {}, corretores: {} };
   const lead = dados.leads[leadId];
   
   if (!lead || !lead.timeline) {
@@ -15,25 +17,211 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
 
-  // Preenche informações do cliente
-  document.getElementById('nome-cliente-timeline').textContent = lead.nome;
+  // INICIALIZAÇÃO - Garantir que arrays existam
+  if (!lead.timeline.documentos) lead.timeline.documentos = [];
+  if (!lead.timeline.emails) lead.timeline.emails = [];
+  if (!lead.timeline.historicoEtapas) lead.timeline.historicoEtapas = [];
+
+  // Exibe informações básicas
+  document.getElementById('timeline-cliente-nome').textContent = lead.nome;
+  document.getElementById('timeline-status').textContent = formatarEtapa(lead.timeline.etapaAtual);
+  document.getElementById('timeline-status').className = `status-badge ${lead.timeline.etapaAtual}`;
+
+  // Informações do cliente
   document.getElementById('cliente-cpf').textContent = lead.timeline.cliente1?.cpf || 'Não informado';
   document.getElementById('cliente-telefone').textContent = lead.timeline.cliente1?.telefone || 'Não informado';
   document.getElementById('cliente-email').textContent = lead.email || 'Não informado';
   document.getElementById('cliente-interesse').textContent = lead.interesse || 'Não informado';
 
-  // Renderiza etapas
+  // Configura o fluxo visual
   renderizarEtapas(lead.timeline.etapaAtual);
 
-  // Configura botão de gerenciar documentos
+  // Configura upload de documentos
+  configurarUploadsDocumentos(lead);
+
+  // Configura botão avançar etapa
+  document.getElementById('btn-avancar-etapa').addEventListener('click', function() {
+    avancarEtapa(lead);
+  });
+
+  // Configura envio de email
+  document.getElementById('btn-enviar-email').addEventListener('click', function() {
+    abrirModalEmail(lead);
+  });
+
+  // Configura gestão de documentos
   document.getElementById('btn-gestao-documentos').addEventListener('click', function() {
-    sessionStorage.setItem('leadTimelineAtual', leadId);
-    window.location.href = 'timeline.html';
+    // Já estamos na página de gestão de documentos
+    alert('Você já está na página de gestão de documentos desta timeline.');
   });
 
   // Mostra histórico completo
   renderizarHistorico(lead);
 
+  // Função para configurar uploads específicos
+  function configurarUploadsDocumentos(lead) {
+    const documentosNecessarios = [
+      { id: 'upload-rg', nome: 'RG', obrigatorio: true, tipo: 'rg' },
+      { id: 'upload-cpf', nome: 'CPF', obrigatorio: true, tipo: 'cpf' },
+      { id: 'upload-comprovante-renda', nome: 'Comprovante de Renda', obrigatorio: true, tipo: 'comprovante-renda' },
+      { id: 'upload-certidao', nome: 'Certidão Civil', obrigatorio: true, tipo: 'certidao' },
+      { id: 'upload-simulacao', nome: 'Simulação', obrigatorio: true, tipo: 'simulacao' },
+      { id: 'upload-outros', nome: 'Outros Documentos', obrigatorio: false, tipo: 'outros' }
+    ];
+
+    const container = document.getElementById('document-list');
+    container.innerHTML = '';
+
+    documentosNecessarios.forEach(doc => {
+      const docContainer = document.createElement('div');
+      docContainer.className = 'document-upload-container';
+      docContainer.innerHTML = `
+        <h4>${doc.nome} ${doc.obrigatorio ? '<span class="obrigatorio">*</span>' : ''}</h4>
+        <input type="file" id="${doc.id}" class="document-upload" data-tipo="${doc.tipo}">
+        <div id="lista-${doc.id}" class="document-list"></div>
+      `;
+      container.appendChild(docContainer);
+
+      // Configura evento de upload
+      document.getElementById(doc.id).addEventListener('change', function(e) {
+        const files = e.target.files;
+        if (files.length > 0) {
+          enviarDocumento(lead, files[0], doc.tipo);
+        }
+      });
+    });
+
+    // Mostra documentos já enviados
+    atualizarListaDocumentos(lead);
+  }
+
+  // Função para enviar documento
+  function enviarDocumento(lead, file, tipo) {
+    // Cria URL temporária para o arquivo
+    const fileURL = URL.createObjectURL(file);
+
+    lead.timeline.documentos.push({
+      nome: file.name,
+      tipo: tipo,
+      tamanho: file.size,
+      data: new Date().toISOString(),
+      arquivo: fileURL
+    });
+
+    // Adiciona ao histórico
+    lead.timeline.historicoEtapas.push({
+      tipo: 'documento',
+      data: new Date().toISOString(),
+      texto: `Documento enviado: ${file.name} (${tipo})`
+    });
+
+    salvarDados(dados);
+    atualizarListaDocumentos(lead);
+    alert('Documento enviado com sucesso!');
+  }
+
+  // Função para abrir modal de email
+  function abrirModalEmail(lead) {
+    const modal = document.createElement('div');
+    modal.className = 'modal-email';
+    modal.innerHTML = `
+      <div class="modal-content">
+        <span class="close-modal" onclick="this.parentElement.parentElement.remove()">&times;</span>
+        <h2>Enviar Documentos para Análise</h2>
+        
+        <div class="form-group">
+          <label>Para (E-mail):</label>
+          <input type="email" id="email-destino" value="analise@imobiliaria.com" class="form-input">
+        </div>
+        
+        <div class="form-group">
+          <label>Assunto:</label>
+          <input type="text" id="email-assunto" value="Documentação para análise - ${lead.nome}" class="form-input">
+        </div>
+        
+        <div class="form-group">
+          <label>Mensagem:</label>
+          <textarea id="email-mensagem" class="form-textarea">Prezados,\n\nSegue em anexo a documentação completa do cliente ${lead.nome} para análise do financiamento.\n\nAtenciosamente,\n${dados.corretores[lead.corretor_id]?.nome || 'Corretor'}</textarea>
+        </div>
+        
+        <button id="btn-enviar-email-confirm" class="btn btn-primary">Enviar E-mail</button>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    document.getElementById('btn-enviar-email-confirm').addEventListener('click', function() {
+      const emailData = {
+        para: document.getElementById('email-destino').value,
+        assunto: document.getElementById('email-assunto').value,
+        mensagem: document.getElementById('email-mensagem').value,
+        data: new Date().toISOString()
+      };
+
+      lead.timeline.emails.push(emailData);
+      
+      // Adiciona ao histórico
+      lead.timeline.historicoEtapas.push({
+        tipo: 'email',
+        data: new Date().toISOString(),
+        texto: `E-mail enviado para: ${emailData.para} - ${emailData.assunto}`
+      });
+
+      salvarDados(dados);
+
+      alert('E-mail registrado com sucesso!');
+      modal.remove();
+      window.location.reload();
+    });
+  }
+
+  // Função para avançar etapa
+  function avancarEtapa(lead) {
+    const etapas = ['documentacao', 'analise', 'aprovacao', 'contrato', 'finalizado'];
+    const etapaAtualIndex = etapas.indexOf(lead.timeline.etapaAtual);
+    
+    if (etapaAtualIndex < etapas.length - 1) {
+      const novaEtapa = etapas[etapaAtualIndex + 1];
+      
+      // Adiciona ao histórico
+      lead.timeline.historicoEtapas.push({
+        tipo: 'etapa',
+        data: new Date().toISOString(),
+        texto: `Etapa alterada de ${formatarEtapa(lead.timeline.etapaAtual)} para ${formatarEtapa(novaEtapa)}`
+      });
+      
+      lead.timeline.etapaAtual = novaEtapa;
+      lead.timeline.ultimaAtualizacao = new Date().toISOString();
+      
+      salvarDados(dados);
+      window.location.reload();
+    } else {
+      alert('A timeline já está na etapa final!');
+    }
+  }
+
+  // Função para atualizar lista de documentos
+  function atualizarListaDocumentos(lead) {
+    if (!lead.timeline.documentos || lead.timeline.documentos.length === 0) {
+      return;
+    }
+
+    lead.timeline.documentos.forEach(doc => {
+      const container = document.getElementById(`lista-upload-${doc.tipo}`);
+      if (container) {
+        container.innerHTML = `
+          <div class="document-item">
+            <span>${doc.nome}</span>
+            <span>(${formatarTamanho(doc.tamanho)})</span>
+            <span>${formatarData(doc.data)}</span>
+            <button onclick="visualizarDocumento('${doc.arquivo}')" class="btn btn-small">Visualizar</button>
+          </div>
+        `;
+      }
+    });
+  }
+
+  // Função para renderizar etapas
   function renderizarEtapas(etapaAtual) {
     const etapas = [
       { id: 'documentacao', nome: 'Documentação' },
@@ -48,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     etapas.forEach(etapa => {
       const etapaEl = document.createElement('div');
-      etapaEl.className = `etapa ${etapa.id === etapaAtual ? 'ativa' : ''} ${etapas.indexOf(etapa) < etapas.indexOf({id: etapaAtual}) ? 'completa' : ''}`;
+      etapaEl.className = `etapa ${etapa.id === etapaAtual ? 'ativa' : ''} ${etapas.indexOf(etapa) < etapas.indexOf(etapas.find(e => e.id === etapaAtual)) ? 'completa' : ''}`;
       etapaEl.innerHTML = `
         <div class="etapa-marcador"></div>
         <div class="etapa-texto">${etapa.nome}</div>
@@ -57,83 +245,38 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  // Função para renderizar histórico
   function renderizarHistorico(lead) {
-    const historicoContainer = document.createElement('div');
-    historicoContainer.className = 'historico-container';
-    historicoContainer.innerHTML = '<h3>Histórico Completo</h3>';
+    const historicoContainer = document.getElementById('historico-lista');
+    historicoContainer.innerHTML = '';
     
-    const eventos = [];
+    if (!lead.timeline.historicoEtapas || lead.timeline.historicoEtapas.length === 0) {
+      historicoContainer.innerHTML = '<p>Nenhuma atividade registrada</p>';
+      return;
+    }
     
-    // Adiciona criação da timeline
-    eventos.push({
-      data: lead.timeline.criadoEm,
-      tipo: 'criacao',
-      texto: `Timeline criada por ${dados.corretores[lead.corretor_id]?.nome || 'corretor'}`
+    // Ordenar por data (mais recente primeiro)
+    const historicoOrdenado = [...lead.timeline.historicoEtapas].sort((a, b) => 
+      new Date(b.data) - new Date(a.data)
+    );
+    
+    historicoOrdenado.forEach(evento => {
+      const item = document.createElement('div');
+      item.className = `historico-item ${evento.tipo}`;
+      item.innerHTML = `
+        <div class="historico-data">${formatarData(evento.data)}</div>
+        <div class="historico-texto">${evento.texto}</div>
+      `;
+      historicoContainer.appendChild(item);
     });
-    
-    // Adiciona documentos
-    if (lead.timeline.documentos) {
-      lead.timeline.documentos.forEach(doc => {
-        eventos.push({
-          data: doc.data,
-          tipo: 'documento',
-          texto: `Documento enviado: ${doc.nome} (${doc.tipo})`
-        });
-      });
-    }
-    
-    // Adiciona emails
-    if (lead.timeline.emails) {
-      lead.timeline.emails.forEach(email => {
-        eventos.push({
-          data: email.data,
-          tipo: 'email',
-          texto: `E-mail enviado para ${email.para}`
-        });
-      });
-    }
-    
-    // Adiciona mudanças de etapa
-    if (lead.timeline.historicoEtapas) {
-      lead.timeline.historicoEtapas.forEach(etapa => {
-        eventos.push({
-          data: etapa.data,
-          tipo: 'etapa',
-          texto: `Etapa alterada para ${formatarEtapa(etapa.para)}`
-        });
-      });
-    }
-    
-    // Ordena eventos por data
-    eventos.sort((a, b) => new Date(b.data) - new Date(a.data));
-    
-    // Cria lista de eventos
-    const lista = document.createElement('div');
-    lista.className = 'historico-lista';
-    
-    if (eventos.length > 0) {
-      eventos.forEach(evento => {
-        const item = document.createElement('div');
-        item.className = `historico-item ${evento.tipo}`;
-        item.innerHTML = `
-          <div class="historico-data">${formatarData(evento.data)}</div>
-          <div class="historico-texto">${evento.texto}</div>
-        `;
-        lista.appendChild(item);
-      });
-    } else {
-      lista.innerHTML = '<p>Nenhum evento registrado</p>';
-    }
-    
-    historicoContainer.appendChild(lista);
-    document.querySelector('.timeline-detail-container').appendChild(historicoContainer);
   }
 
+  // Funções auxiliares
   function formatarEtapa(etapa) {
     const etapas = {
       'documentacao': 'Documentação',
       'analise': 'Análise',
-      'aprovacao': 'Aprovação',
+      'aprovacao': 'Aprovado',
       'contrato': 'Contrato',
       'finalizado': 'Finalizado'
     };
@@ -141,6 +284,21 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function formatarData(dataString) {
-    return new Date(dataString).toLocaleString('pt-BR');
+    return new Date(dataString).toLocaleDateString('pt-BR');
   }
+
+  function formatarTamanho(bytes) {
+    if (bytes < 1024) return bytes + ' bytes';
+    else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+    else return (bytes / 1048576).toFixed(1) + ' MB';
+  }
+
+  function salvarDados(dados) {
+    localStorage.setItem('dadosImobiliaria', JSON.stringify(dados));
+  }
+
+  // Funções globais
+  window.visualizarDocumento = function(url) {
+    window.open(url, '_blank');
+  };
 });
