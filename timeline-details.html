@@ -34,6 +34,36 @@
         <!-- Etapas serão renderizadas via JS -->
       </div>
     </div>
+      <!-- Adicione esta seção APÓS o fluxo da timeline -->
+    <div class="quadro-aprovacao hidden" id="quadro-aprovacao">
+      <h2>📊 Registro de Aprovação</h2>
+      <div class="form-aprovacao">
+        <textarea id="texto-aprovacao" placeholder="Digite os valores aprovados, condições, observações..." rows="4"></textarea>
+        <button id="btn-adicionar-aprovacao" class="btn btn-primary">➕ Adicionar Aprovação</button>
+      </div>
+      
+      <div id="lista-aprovacoes" class="lista-aprovacoes">
+        <!-- Aprovações serão carregadas aqui -->
+      </div>
+    </div>
+    
+    <!-- Modifique a seção de documentos para ter toggle -->
+    <div class="documentos-container">
+      <h2 onclick="toggleDocumentos()" style="cursor: pointer; display: flex; align-items: center;">
+        📁 Documentos 
+        <span id="documentos-arrow" style="margin-left: 10px;">▼</span>
+      </h2>
+      <div id="documentos-content" class="documentos-content">
+        <div id="document-list" class="document-list">
+          <div id="lista-upload-rg"></div>
+          <div id="lista-upload-cpf"></div>
+          <div id="lista-upload-comprovante-renda"></div>
+          <div id="lista-upload-certidao"></div>
+          <div id="lista-upload-simulacao"></div>
+          <div id="lista-upload-outros"></div>
+        </div>
+      </div>
+    </div>
 
     <!-- Ações -->
     <div class="timeline-actions">
@@ -65,37 +95,6 @@
       </div>
     </div>
   </div>
-  <!-- Adicione esta seção APÓS o fluxo da timeline -->
-<div class="quadro-aprovacao hidden" id="quadro-aprovacao">
-  <h2>📊 Registro de Aprovação</h2>
-  <div class="form-aprovacao">
-    <textarea id="texto-aprovacao" placeholder="Digite os valores aprovados, condições, observações..." rows="4"></textarea>
-    <button id="btn-adicionar-aprovacao" class="btn btn-primary">➕ Adicionar Aprovação</button>
-  </div>
-  
-  <div id="lista-aprovacoes" class="lista-aprovacoes">
-    <!-- Aprovações serão carregadas aqui -->
-  </div>
-</div>
-
-<!-- Modifique a seção de documentos para ter toggle -->
-<div class="documentos-container">
-  <h2 onclick="toggleDocumentos()" style="cursor: pointer; display: flex; align-items: center;">
-    📁 Documentos 
-    <span id="documentos-arrow" style="margin-left: 10px;">▼</span>
-  </h2>
-  <div id="documentos-content" class="documentos-content">
-    <div id="document-list" class="document-list">
-      <div id="lista-upload-rg"></div>
-      <div id="lista-upload-cpf"></div>
-      <div id="lista-upload-comprovante-renda"></div>
-      <div id="lista-upload-certidao"></div>
-      <div id="lista-upload-simulacao"></div>
-      <div id="lista-upload-outros"></div>
-    </div>
-  </div>
-</div>
-
   <script src="timeline-details.js"></script>
 </body>
 </html>
