@@ -16,7 +16,133 @@ document.addEventListener('DOMContentLoaded', function() {
     window.location.href = 'timelines.html';
     return;
   }
+   // Adicione estas funções NO INÍCIO do DOMContentLoaded:
 
+  // Função para toggle dos documentos
+  window.toggleDocumentos = function() {
+    const content = document.getElementById('documentos-content');
+    const arrow = document.getElementById('documentos-arrow');
+    
+    content.classList.toggle('hidden');
+    arrow.textContent = content.classList.contains('hidden') ? '►' : '▼';
+  };
+  
+  // Função para mostrar/ocultar quadro de aprovação
+  function toggleQuadroAprovacao(etapaAtual) {
+    const quadro = document.getElementById('quadro-aprovacao');
+    if (etapaAtual === 'aprovacao' || etapaAtual === 'contrato' || etapaAtual === 'finalizado') {
+      quadro.classList.remove('hidden');
+      carregarAprovacoes(lead);
+    } else {
+      quadro.classList.add('hidden');
+    }
+  }
+  
+  // Função para carregar aprovações
+  function carregarAprovacoes(lead) {
+    const container = document.getElementById('lista-aprovacoes');
+    container.innerHTML = '';
+    
+    if (!lead.timeline.aprovacoes || lead.timeline.aprovacoes.length === 0) {
+      container.innerHTML = '<p>Nenhum registro de aprovação encontrado.</p>';
+      return;
+    }
+    
+    lead.timeline.aprovacoes.sort((a, b) => new Date(b.data) - new Date(a.data))
+      .forEach(aprovacao => {
+        const div = document.createElement('div');
+        div.className = 'aprovacao-item';
+        div.innerHTML = `
+          <div class="aprovacao-data">${formatarDataCompleta(aprovacao.data)}</div>
+          <div class="aprovacao-texto">${aprovacao.texto}</div>
+          <button onclick="removerAprovacao('${aprovacao.id}')" class="btn-remover-aprovacao">
+            🗑️ Remover
+          </button>
+        `;
+        container.appendChild(div);
+      });
+  }
+  
+  // Função para adicionar aprovação
+  function configurarAprovacao(lead) {
+    document.getElementById('btn-adicionar-aprovacao').addEventListener('click', function() {
+      const texto = document.getElementById('texto-aprovacao').value.trim();
+      
+      if (!texto) {
+        alert('Por favor, digite o texto da aprovação');
+        return;
+      }
+      
+      if (!lead.timeline.aprovacoes) {
+        lead.timeline.aprovacoes = [];
+      }
+      
+      const novaAprovacao = {
+        id: 'aprovacao_' + Date.now(),
+        texto: texto,
+        data: new Date().toISOString(),
+        responsavel: 'corretor' // Você pode adicionar o usuário logado aqui
+      };
+      
+      lead.timeline.aprovacoes.push(novaAprovacao);
+      document.getElementById('texto-aprovacao').value = '';
+      
+      salvarDados(dados);
+      carregarAprovacoes(lead);
+      alert('Aprovação registrada com sucesso!');
+    });
+  }
+  
+  // Função global para remover aprovação
+  window.removerAprovacao = function(aprovacaoId) {
+    if (confirm('Tem certeza que deseja remover este registro de aprovação?')) {
+      lead.timeline.aprovacoes = lead.timeline.aprovacoes.filter(a => a.id !== aprovacaoId);
+      salvarDados(dados);
+      carregarAprovacoes(lead);
+    }
+  };
+  
+  // Adicione esta função auxiliar para data completa
+  function formatarDataCompleta(dataString) {
+    return new Date(dataString).toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+  
+  // NO FINAL do DOMContentLoaded, adicione:
+  toggleQuadroAprovacao(lead.timeline.etapaAtual);
+  configurarAprovacao(lead);
+  
+  // Modifique a função avancarEtapa para mostrar o quadro quando necessário
+  function avancarEtapa(lead) {
+    const etapas = ['documentacao', 'analise', 'aprovacao', 'contrato', 'finalizado'];
+    const etapaAtualIndex = etapas.indexOf(lead.timeline.etapaAtual);
+    
+    if (etapaAtualIndex < etapas.length - 1) {
+      const novaEtapa = etapas[etapaAtualIndex + 1];
+      
+      lead.timeline.historicoEtapas.push({
+        tipo: 'etapa',
+        data: new Date().toISOString(),
+        texto: `Etapa alterada para ${formatarEtapa(novaEtapa)}`
+      });
+      
+      lead.timeline.etapaAtual = novaEtapa;
+      lead.timeline.ultimaAtualizacao = new Date().toISOString();
+      
+      salvarDados(dados);
+      
+      // Mostra/oculta quadro de aprovação baseado na nova etapa
+      toggleQuadroAprovacao(novaEtapa);
+      
+      alert(`Etapa avançada para: ${formatarEtapa(novaEtapa)}`);
+      window.location.reload();
+    }
+}
   // INICIALIZAÇÃO - Garantir que arrays existam
   if (!lead.timeline.documentos) lead.timeline.documentos = [];
   if (!lead.timeline.emails) lead.timeline.emails = [];
