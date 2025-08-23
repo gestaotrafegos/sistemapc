@@ -89,13 +89,13 @@ document.addEventListener('DOMContentLoaded', function() {
       
       salvarDados(dados);
       carregarAprovacoes(lead);
-      alert('Aprovação registrada com sucesso!');
+      alert('Anotação registrada com sucesso!');
     });
   }
   
   // Função global para remover aprovação
   window.removerAprovacao = function(aprovacaoId) {
-    if (confirm('Tem certeza que deseja remover este registro de aprovação?')) {
+    if (confirm('Tem certeza que deseja remover este registro?')) {
       lead.timeline.aprovacoes = lead.timeline.aprovacoes.filter(a => a.id !== aprovacaoId);
       salvarDados(dados);
       carregarAprovacoes(lead);
