@@ -2,10 +2,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const leadId = sessionStorage.getItem('leadTimelineAtual');
   if (!leadId) {
     alert('Nenhum cliente selecionado');
-    window.location.href = 'clientes.html';
+    window.location.href = 'timelines.html';
     return;
   }
-
+  // Inicializa documentos se não existirem
+  if (!lead.timeline.documentos) {
+    lead.timeline.documentos = [];
+  }
   const dados = JSON.parse(localStorage.getItem('dadosImobiliaria'));
   const lead = dados.leads[leadId];
   
