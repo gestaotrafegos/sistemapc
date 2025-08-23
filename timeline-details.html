@@ -9,27 +9,52 @@
 <body class="pagina-secundaria">
   <div class="container">
     <header>
-      <h1>Detalhes da Timeline</h1>
+      <h1 id="timeline-cliente-nome">Detalhes da Timeline</h1>
       <button onclick="window.history.back()" class="btn btn-voltar">← Voltar</button>
     </header>
 
-    <div class="timeline-detail-container">
-      <div class="client-info-card">
-        <h2 id="nome-cliente-timeline"></h2>
-        <div class="info-grid">
-          <div><strong>CPF:</strong> <span id="cliente-cpf"></span></div>
-          <div><strong>Telefone:</strong> <span id="cliente-telefone"></span></div>
-          <div><strong>E-mail:</strong> <span id="cliente-email"></span></div>
-          <div><strong>Interesse:</strong> <span id="cliente-interesse"></span></div>
-        </div>
+    <!-- Status e Informações -->
+    <div class="timeline-header">
+      <div class="status-container">
+        <span>Status:</span>
+        <span id="timeline-status" class="status-badge"></span>
       </div>
+      <div class="timeline-info">
+        <span>CPF: <span id="cliente-cpf">-</span></span>
+        <span>Telefone: <span id="cliente-telefone">-</span></span>
+        <span>Email: <span id="cliente-email">-</span></span>
+        <span>Interesse: <span id="cliente-interesse">-</span></span>
+      </div>
+    </div>
 
-      <div class="timeline-flow-container">
-        <h3>Progresso do Financiamento</h3>
-        <div class="timeline-flow-steps">
-          <!-- Etapas serão preenchidas via JS -->
-        </div>
-        <button id="btn-gestao-documentos" class="btn btn-primary">Gerenciar Documentos</button>
+    <!-- Fluxo da Timeline -->
+    <div class="timeline-flow">
+      <h2>Progresso do Processo</h2>
+      <div class="timeline-flow-steps">
+        <!-- Etapas serão renderizadas via JS -->
+      </div>
+    </div>
+
+    <!-- Ações -->
+    <div class="timeline-actions">
+      <button id="btn-avancar-etapa" class="btn btn-primary">Avançar Etapa</button>
+      <button id="btn-enviar-email" class="btn btn-secondary">Enviar Email</button>
+      <button id="btn-gestao-documentos" class="btn btn-secondary">Gerenciar Documentos</button>
+    </div>
+
+    <!-- Lista de Documentos -->
+    <div class="documentos-container">
+      <h2>Documentos</h2>
+      <div id="document-list" class="document-list">
+        <!-- Documentos serão renderizados via JS -->
+      </div>
+    </div>
+
+    <!-- Histórico -->
+    <div class="historico-container">
+      <h2>Histórico de Atividades</h2>
+      <div id="historico-lista" class="historico-lista">
+        <!-- Histórico será renderizado via JS -->
       </div>
     </div>
   </div>
